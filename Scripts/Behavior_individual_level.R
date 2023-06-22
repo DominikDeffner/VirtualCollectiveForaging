@@ -537,7 +537,7 @@ save(s_visibility, file = "s_visibility")
 
 ###
 ##
-# Create large behavioral plot (S1 in the ESM)
+# Create supplementary behavioral plot S1 
 ##
 ###
 

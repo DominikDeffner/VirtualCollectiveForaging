@@ -1,7 +1,11 @@
+##################################################################################
 
-# Main analysis script for collective foraging experiment ("Coin Scrounge")
+#Quantifying latent social decision-making in unconstrained human collectives
+#authored by Dominik Deffner (deffner@mpib-berlin.mpg.de)
 
+#MASTER FILE to source all other scripts
 
+##################################################################################
 
 #Set working directory
 setwd("~/GitHub/CoinScrounge")
@@ -33,5 +37,7 @@ source("Behavior_solitary.R")
 
 
 
+#Runs and plots collective visual-spatial dynamics analyses using time-lagged Gaussian-process regressions
+source("CollectiveDynamics.R")
 
 

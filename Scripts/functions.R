@@ -1,20 +1,14 @@
 
-
 ###
 ##
 # FUNCTIONS AND PACKAGES
 ##
 ###
 
-
 #Load or install required packaged
-
 packages <- c("cmdstanr", "animation", "plotrix", "rethinking", "scales", "RColorBrewer", "readr", "trajr", "momentuHMM",
               "tidyverse", "sp", "pracma", "gridExtra", "cowplot", "ggpubr", "berryFunctions")
-
 lapply(packages, require, character.only = TRUE)
-
-
 
 ###
 ##
@@ -32,7 +26,6 @@ Conv2 <- function(xangle, yangle){
   return(list(mu = mu, kappa = kappa))
 } 
 
-
 heading_to_radians <- function(ForwardX, ForwardZ){
   angle <- atan2(ForwardZ, ForwardX)
   if (angle < 0) angle <- angle + 2*pi
@@ -40,7 +33,6 @@ heading_to_radians <- function(ForwardX, ForwardZ){
 }
 
 degree_to_radians <- function(degree) return(degree * pi/180)
-
 
 dvonmises <- function(y, mu, kappa, log = FALSE) {
   if (any(kappa < 0)) {
@@ -55,7 +47,6 @@ dvonmises <- function(y, mu, kappa, log = FALSE) {
 }
 
 
-
 ###
 ##
 # Plotting functions
@@ -66,13 +57,10 @@ dvonmises <- function(y, mu, kappa, log = FALSE) {
 x <- seq(from=0, to=1, by=0.2) # fake data
 col.pal <- brewer.pal(length(x), "Set1") #create a pallette which you loop over for corresponding values
 
-
-
 # Function to compute 90% HPD intervals and plot regression line
 plot_regression_line <- function(samples, data, environment, color){
   
   s <- samples
-  
   x_min <- min(data)
   x_max <- max(data)  
   
@@ -103,7 +91,6 @@ plot_regression_line <- function(samples, data, environment, color){
   
 }
 
-
 ###
 ##
 # Other useful functions
@@ -112,7 +99,6 @@ plot_regression_line <- function(samples, data, environment, color){
 
 #Get right session name 
 get_session <- function(session, round, data) paste("session_",session,"_round_",round,"_",data, sep = "")
-
 
 #Get minimum positive value
 minpositive = function(x) min(x[x > 0])
@@ -132,3 +118,5 @@ unstandardize <- function(x) {
   return( as.numeric(z) )
 }
 
+#Get most frequent element of numeric vector
+Mode <- function(x){ as.numeric(names(sort(-table(x)))[1]) }
