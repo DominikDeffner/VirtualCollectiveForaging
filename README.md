@@ -2,8 +2,9 @@
 
 This repository contains the scripts to reproduce all analyses and figures in 
 
-****Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Wu, C., Romanczuk, P. & Kurvers, R. (submitted): Quantifying latent social decision-making in unconstrained
-human collectives****
+**Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Wu, C., Romanczuk, P. & Kurvers, R. (submitted):**
+
+****Quantifying latent social decision-making in unconstrained human collectives****
 
 The preprint can be found here:
 
@@ -20,9 +21,14 @@ The "Scripts" folder contains all relevant R scripts for data processing and ana
 - "Behavior_solitary.R" runs and plots behavioral analyses for solo control condition
 
 
-  
-The "Data" folder contains all raw data for both "Group" and "Solo"
+The "Stan model code" folder contains stan files for the (baseline and time-varying) Social Hidden Markov Decision model as well as the time-lagged Gaussian-process model
 
+- "m_SHMDM.stan" is the baseline HMM
+- "m_SHMDM_temporal.stan" is the time-varying HMM
+- "m_temporal_success.stan" is monotonic-effect model for success over time (see Fig.4 in the ms)
+- "m_time_laggedGP.stan" is the time-lagged Gaussian-process model to analyze collective visual-spatial dynamics
+
+The "Data" folder contains all raw data for both "Group" and "Solo"
 
 ***Software requirements***
 The analysis code was written in R 4.0.3. Statistical models are fit using the Stan MCMC engine via the rstan (2.21.2) and cmdstanr (0.5.3) packages, which require a C++ compiler. Installation  instructions are available at https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started and https://mc-stan.org/cmdstanr/articles/cmdstanr.html. See also the Stan user guide at https://mc-stan.org/users/documentation. The rethinking package (2.12) is required to process fitted model outputs (installation instructions at http://xcelab.net/rm/software/).
