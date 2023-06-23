@@ -8,10 +8,10 @@
 ####
 
 #Load dat_patches, dat_players files and extended dat_players version
-load("data/dat_patches")
-load("data/dat_players_extended")
+load("Data/dat_patches")
+load("Data/dat_players_extended")
 dat_players_extended <- dat_players
-load("data/dat_players")
+load("Data/dat_players")
 
 ####
 ###
@@ -174,7 +174,7 @@ for (id in unique(dat_players$id)) {
   }
 }
 
-save(d, file = "data/d_rounds")
+save(d, file = "Data/d_rounds")
 
 ####
 ###
@@ -247,7 +247,7 @@ for (id in unique(dat_solo_players$id)) {
   }
 }
 
-save(d_solo, file = "data/d_rounds_solo")
+save(d_solo, file = "Data/d_rounds_solo")
 
 
 ####
@@ -294,6 +294,6 @@ for (group in unique(d$Group)) {
 }
 
 
-save(d_group, file = "data/d_group")
+save(d_group, file = "Data/d_group")
 
 

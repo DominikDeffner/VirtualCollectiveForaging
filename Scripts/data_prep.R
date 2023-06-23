@@ -2,15 +2,15 @@
 #Data preparation script to get raw data into analyzable format for later processing and analysis
 
 #Get all file names
-Files_group <- list.files("~/CoinScrounge/data/Group")
-Files_solo <- list.files("~/CoinScrounge/data/Solo")
+Files_group <- list.files("Data/Group")
+Files_solo <- list.files("Data/Solo")
 
 
 #First we construct some useful variables for later use
 
 #Determine session (0-11) from file names
 Sessions_group <- as.numeric(sapply(Files_group, function(x){ 
-  string <- list.files(paste("~/CoinScrounge/data/Group/",x, sep = ""))[1]
+  string <- list.files(paste("Data/Group/",x, sep = ""))[1]
   if (nchar(string) == 18){
     as.numeric(substr(string,9,9)) 
   } else {
@@ -20,7 +20,7 @@ Sessions_group <- as.numeric(sapply(Files_group, function(x){
 ))
 
 Sessions_solo <- as.numeric(sapply(Files_solo, function(x){ 
-  string <- list.files(paste("~/CoinScrounge/data/Solo/",x, sep = ""))[1]
+  string <- list.files(paste("Data/Solo/",x, sep = ""))[1]
   if (nchar(string) == 18){
     as.numeric(substr(string,9,9)) 
   } else {
@@ -56,15 +56,15 @@ Concentrated[[12]] <- c(3,4)
 #Check which files have higher sampling rate (we reduced the sampling rate from 50Hz to 25Hz after a couple of sessions)
 
 Higher_sampling_group <- sapply(1:length(Files_group), function(i) {
-  file_name <- list.files(paste0("~/CoinScrounge/data/Group/",Files_group[i] ) )[3]
-  ifelse(length(count.fields(paste0("~/CoinScrounge/data/Group/",Files_group[i],"/", file_name ))) > 80000, TRUE, FALSE)
+  file_name <- list.files(paste0("Data/Group/",Files_group[i] ) )[3]
+  ifelse(length(count.fields(paste0("Data/Group/",Files_group[i],"/", file_name ))) > 80000, TRUE, FALSE)
 }   
 )
 
 
 Higher_sampling_solo <- sapply(1:length(Files_solo), function(i) {
-  file_name <- list.files(paste0("~/CoinScrounge/data/Solo/",Files_solo[i] ) )[3]
-  ifelse(length(count.fields(paste0("~/CoinScrounge/data/Solo/",Files_solo[i],"/", file_name ))) > 20000, TRUE, FALSE)
+  file_name <- list.files(paste0("Data/Solo/",Files_solo[i] ) )[3]
+  ifelse(length(count.fields(paste0("Data/Solo/",Files_solo[i],"/", file_name ))) > 20000, TRUE, FALSE)
 }   
 )
 
@@ -98,7 +98,7 @@ for (g in 1:40) {
     print(Round)
     
     #Player data
-    d <- read.csv2(paste("~/CoinScrounge/Data/Group/", Group,"/",get_session(session = Session, round = Round, data = "players"), ".log", sep = ""))
+    d <- read.csv2(paste("Data/Group/", Group,"/",get_session(session = Session, round = Round, data = "players"), ".log", sep = ""))
     
     char_columns <- c(1,3,4,5,6,7)             
     d[ , char_columns] <- apply(d[ , char_columns], 2, function(x) as.numeric(sub(",", ".", x, fixed = TRUE)))
@@ -177,7 +177,7 @@ dat_players$orient <- sapply( 1:nrow(dat_players), function(i) {
 } 
 )
 
-#Calculate which other players were visible at each point in time based on player orientation and horizontal field of view (108°)
+#Calculate which other players were visible at each point in time based on player orientation and horizontal field of view (108?)
 
 dat_players$VisibleOthers <- vector(mode = "list", length = nrow(dat_players))
 
@@ -229,7 +229,7 @@ for (g in 1:40) {
     
     #Patch data
     
-    d <- read.csv2(paste("~/CoinScrounge/Data/Group/", Group,"/",get_session(session = Session, round = Round, data = "patches"),".log", sep = ""))
+    d <- read.csv2(paste("Data/Group/", Group,"/",get_session(session = Session, round = Round, data = "patches"),".log", sep = ""))
     char_columns <- c(1,3,4)             
     d[ , char_columns] <- apply(d[ , char_columns], 2, function(x) as.numeric(sub(",", ".", x, fixed = TRUE)))
     d$TriggerPlayer <-d$TriggerPlayer-min(d$TriggerPlayer, na.rm = TRUE)+1
@@ -294,7 +294,7 @@ for (g in 1:40) {
   Session <- Sessions_group[g]
     
     #Player data
-    d <- read.csv2(paste("~/CoinScrounge/Data/Group/", Group,"/",paste("session_",Session,"_dems", sep = ""), ".log", sep = ""),header=FALSE)   
+    d <- read.csv2(paste("Data/Group/", Group,"/",paste("session_",Session,"_dems", sep = ""), ".log", sep = ""),header=FALSE)   
     d <- d[-1,2:5]
     
     if(nrow(d>4)) d <- d[1:4,]
@@ -317,7 +317,7 @@ colnames(dat_demographics) <- c("Age", "Gender", "Experience", "Minecraft")
 dat_demographics$Gender <- as.numeric( ifelse(dat_demographics$Gender == "MÃ¤nnlich", 1, 2) )
 dat_demographics$Minecraft <- as.numeric( unlist( sapply(1:160, function(i){
   if (dat_demographics$Minecraft[i] == "Ja")          return(1)
-  if (dat_demographics$Minecraft[i] == "WeiÃY Nicht") return(2)
+  if (dat_demographics$Minecraft[i] == "WeiÃŸ Nicht") return(2)
   if (dat_demographics$Minecraft[i] == "Nein")        return(0)
   
 })) )
@@ -359,7 +359,7 @@ for (g in 1:40) {
     print(Round)
     
     #Player data
-    d <- read.csv2(paste("~/CoinScrounge/Data/Solo/", Participant,"/",get_session(session = Session, round = Round, data = "players"), ".log", sep = ""))
+    d <- read.csv2(paste("Data/Solo/", Participant,"/",get_session(session = Session, round = Round, data = "players"), ".log", sep = ""))
     
     char_columns <- c(1,3,4,5,6,7)             
     d[ , char_columns] <- apply(d[ , char_columns], 2, function(x) as.numeric(sub(",", ".", x, fixed = TRUE)))
@@ -427,7 +427,7 @@ for (g in 1:40) {
     
     #Patch data
     
-    d <- read.csv2(paste("~/CoinScrounge/Data/Solo/", Participant,"/",get_session(session = Session, round = Round, data = "patches"),".log", sep = ""))
+    d <- read.csv2(paste("Data/Solo/", Participant,"/",get_session(session = Session, round = Round, data = "patches"),".log", sep = ""))
     char_columns <- c(1,3,4)             
     d[ , char_columns] <- apply(d[ , char_columns], 2, function(x) as.numeric(sub(",", ".", x, fixed = TRUE)))
     d$TriggerPlayer <-d$TriggerPlayer-min(d$TriggerPlayer, na.rm = TRUE)+1
@@ -481,7 +481,7 @@ for (g in 1:40) {
   
   
   #Player data
-  d <- read.csv2(paste("~/CoinScrounge/Data/Solo/", Participant,"/",paste("session_",Session,"_dems", sep = ""), ".log", sep = ""),header=FALSE)   
+  d <- read.csv2(paste("Data/Solo/", Participant,"/",paste("session_",Session,"_dems", sep = ""), ".log", sep = ""),header=FALSE)   
   d <- d[-1,2:5]
   
   d[,1] <- as.numeric(d[,1])
@@ -503,7 +503,7 @@ dat_demographics_solo$Gender <- as.numeric( ifelse(dat_demographics_solo$Gender 
 
 
 dat_demographics_solo$Minecraft[dat_demographics_solo$Minecraft == "Ja"]            <- 1
-dat_demographics_solo$Minecraft[dat_demographics_solo$Minecraft == "WeiÃY Nicht"]   <- 2
+dat_demographics_solo$Minecraft[dat_demographics_solo$Minecraft == "WeiÃŸ Nicht"]   <- 2
 dat_demographics_solo$Minecraft[dat_demographics_solo$Minecraft == "Nein"] <- 0
 dat_demographics_solo$Minecraft <- as.numeric(dat_demographics_solo$Minecraft)
 
@@ -517,11 +517,11 @@ dat_demographics_solo$Experience <- as.numeric(dat_demographics_solo$Experience)
 
 
 #Save dataframes
-save(dat_players, file = "data/dat_players")
-save(dat_patches, file = "data/dat_patches")
-save(dat_demographics, file = "data/dat_demographics")
+save(dat_players, file = "Data/dat_players")
+save(dat_patches, file = "Data/dat_patches")
+save(dat_demographics, file = "Data/dat_demographics")
 
-save(dat_solo_players, file = "data/dat_solo_players")
-save(dat_solo_patches, file = "data/dat_solo_patches")
-save(dat_demographics_solo, file = "data/dat_demographics_solo")
+save(dat_solo_players, file = "Data/dat_solo_players")
+save(dat_solo_patches, file = "Data/dat_solo_patches")
+save(dat_demographics_solo, file = "Data/dat_demographics_solo")
 

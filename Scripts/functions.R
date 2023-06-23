@@ -6,8 +6,8 @@
 ###
 
 #Load or install required packaged
-packages <- c("cmdstanr", "animation", "plotrix", "rethinking", "scales", "RColorBrewer", "readr", "trajr", "momentuHMM",
-              "tidyverse", "sp", "pracma", "gridExtra", "cowplot", "ggpubr", "berryFunctions")
+packages <- c("cmdstanr", "rethinking", "scales", "RColorBrewer", "readr", "trajr", "momentuHMM",
+              "tidyverse", "sp", "pracma", "gridExtra", "ggpubr", "berryFunctions")
 lapply(packages, require, character.only = TRUE)
 
 ###
