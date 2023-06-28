@@ -6,7 +6,7 @@
 ###
 
 #Load relevant data
-load("data/d_rounds_solo")
+load("Data/d_rounds_solo")
 
 ####
 ###
@@ -24,7 +24,6 @@ dat <- list(N = length(d_solo$id),
 
 
 #Model to predict number of Coins (Poisson)
-
 poisson_multilevel <- "
 
 
@@ -87,8 +86,6 @@ generated quantities{
 
 m_coins <- stan(model_code = poisson_multilevel, data = dat, iter = 4000, cores = 2, chains = 2, refresh = 10, control = list(adapt_delta = 0.8, max_treedepth = 12))
 s_coins <- extract.samples(m_coins)
-#save(s_coins, file = "Stanfits/s_coins_solo")
-
 
 
 ####
@@ -103,8 +100,6 @@ dat$outcome <-  d_solo$discoveries
 
 m_discoveries <- stan(model_code = poisson_multilevel, data = dat, iter = 4000, cores = 2, chains = 2, refresh = 10, control = list(adapt_delta = 0.8, max_treedepth = 12))
 s_discoveries <- extract.samples(m_discoveries)
-#save(s_discoveries, file = "Stanfits/s_discoveries_solo")
-
 
 #Model to predict number of discoveries depending on movement metrics
 
@@ -181,7 +176,6 @@ dat$discoveries <- d_solo$discoveries
 
 m <- stan(model_code = discoveries_predict, data = dat, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_sin <- extract.samples(m)
-#save(s_sin, file = "Stanfits/s_sin_solo")
 
 
 ###
@@ -197,7 +191,6 @@ dat$discoveries <- d_solo$discoveries
 
 m <- stan(model_code = discoveries_predict, data = dat, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_DC <- extract.samples(m)
-#save(s_DC, file = "Stanfits/s_DC_solo")
 
 
 dat$pred <- standardize(d_solo$SDDC)
@@ -205,7 +198,6 @@ dat$discoveries <- d_solo$discoveries
 
 m <- stan(model_code = discoveries_predict, data = dat, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_SDDC <- extract.samples(m)
-#save(s_SDDC, file = "Stanfits/s_SDDC_solo")
 
 ###
 ##
@@ -219,9 +211,6 @@ dat$discoveries <- d_solo$discoveries
 
 m <- stan(model_code = discoveries_predict, data = dat, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_ConvexHull <- extract.samples(m)
-#save(s_ConvexHull, file = "Stanfits/s_ConvexHull_solo")
-
-
 
 
 ###
@@ -229,16 +218,6 @@ s_ConvexHull <- extract.samples(m)
 # Create plots
 ##
 ###
-
-#Load all stanfits
-load("Stanfits/s_coins_solo")
-load("Stanfits/s_discoveries_solo")
-load("Stanfits/s_sin_solo")
-load("Stanfits/s_DC_solo")
-load("Stanfits/s_SDDC_solo")
-load("Stanfits/s_ConvexHull_solo")
-
-
 
 
 #Define plotting function to be re-used later
@@ -268,9 +247,6 @@ behavioral_plotting_fct <- function(xseq = c(1.5, 2),
   x_coords_con  <- rep(xseq[1],length(con))+jitter(rep(0,length(con)),5)
   x_coords_dist <- rep(xseq[2],length(dist))+jitter(rep(0,length(dist)),5)
   
-  for (i in unique(dat$id)) {
-    segments(x_coords_con[con_ids==i],con[con_ids==i],x_coords_dist[dist_ids==i],dist[dist_ids==i], col = alpha("black", alpha = 0.05) )
-  }
   
   #Concentrated
   points(x=x_coords_con,y=con, col = alpha(col.pal[2], alpha = 0.4))
@@ -325,12 +301,7 @@ behavioral_plotting_fct(         ylim = c(0,15),
                                     
 legend("topleft",title = "Environment", c("Concentrated", "Distributed"), col = c(alpha(col.pal[2],alpha = 0.9),alpha(col.pal[3],alpha = 0.9)), cex = 0.7, lwd = 8, lty = 1, bty = "n")
 
-            
 #dev.off()
-
-
-
-
 
 
 #graphics.off()

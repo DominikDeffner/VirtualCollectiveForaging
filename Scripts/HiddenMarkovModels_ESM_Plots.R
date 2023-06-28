@@ -10,10 +10,7 @@
 # Plot example HMM trajectory with recovered viterbi states
 ##
 
-s <- extract.samples(fit)
-
-load("dat_players_extended")
-load("viterbi_states")
+load("Data/dat_players_extended")
 
 track_id =1
 

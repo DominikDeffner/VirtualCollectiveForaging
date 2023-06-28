@@ -5,8 +5,6 @@
 ##
 ###
 
-#Extract samples
-s <- extract.samples(fit)
 
 #Choose number of samples from the posterior (we don't need many as results are very consistent across samples)
 N_samp <- 100
@@ -143,4 +141,3 @@ for (i in 1:N_samp ) {
 }
 
 viterbi_states <- apply(viterbi, 1, Mode)
-save(viterbi_states ,file = "viterbi_states")

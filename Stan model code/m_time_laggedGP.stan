@@ -1,6 +1,6 @@
 
 // Parallelized stan code for Time-lagged Gaussian-process regression model (authored by Dominik Deffner: deffner@mpib-berlin.mpg.de)
-// This model models the influence of interindividual distance/visibility on collective success across different time lags
+// This model describes the influence of interindividual distance/visibility on collective success across different time lags
 // Gaussian processes are used to regularize estimates such that similar time lags are expected to have more similar weights
 
 functions{

@@ -7,8 +7,7 @@
 
 
 #Load relevant data files
-load("data/dat_players")
-load("data/dat_group")
+load("Data/dat_players")
 
 #Exclude tracks with missing data; there are two rounds (out of 160) where we have gaps in the time series due to technical error
 dat_players <- dat_players[-which(dat_players$Group %in% c(2,21) & dat_players$Round == 3),]
@@ -83,9 +82,6 @@ stan.dataLagged <- list(N = nrow(dat_group),
                         intervals = 1,
                         MaxLag = 30)
 
-save(stan.dataLagged, file = "stan.dataLagged")
-
-
 stan.dataLagged$Exploit <- ifelse(stan.dataLagged$n_exploit > 0, 1, 0)
 
 
@@ -97,17 +93,17 @@ stan.dataLagged$Exploit <- ifelse(stan.dataLagged$n_exploit > 0, 1, 0)
 stan.dataLagged$MaxLag <- 36
 stan.dataLagged$intervals <- 5
 stan.dataLagged$predictor <- standardize(stan.dataLagged$dist)
-m_parallel <- cmdstan_model("Time_laggedGPPar.stan", cpp_options = list(stan_threads = TRUE))
-fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 1500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 1000)
+m_parallel <- cmdstan_model("Stan model code/m_time_laggedGP.stan", cpp_options = list(stan_threads = TRUE))
+fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 100)
 fit <- rstan::read_stan_csv(fit_parallel$output_files())
-save(fit, file = "fit_laggeddist3min")
+s_dist3min <- extract.samples(fit)
 
 #VISIBILITY
 stan.dataLagged$predictor <- standardize(stan.dataLagged$vis)
-m_parallel <- cmdstan_model("Time_laggedGPPar.stan", cpp_options = list(stan_threads = TRUE))
-fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 1500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 1000)
+m_parallel <- cmdstan_model("Stan model code/m_time_laggedGP.stan", cpp_options = list(stan_threads = TRUE))
+fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 100)
 fit <- rstan::read_stan_csv(fit_parallel$output_files())
-save(fit, file = "fit_laggedvis3min")
+s_vis3min <- extract.samples(fit)
 
 #30 seconds in 1s intervals
 
@@ -115,17 +111,17 @@ save(fit, file = "fit_laggedvis3min")
 stan.dataLagged$MaxLag <- 30
 stan.dataLagged$intervals <- 1
 stan.dataLagged$predictor <- standardize(stan.dataLagged$dist)
-m_parallel <- cmdstan_model("Time_laggedGPPar.stan", cpp_options = list(stan_threads = TRUE))
-fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 1500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 1000)
+m_parallel <- cmdstan_model("Stan model code/m_time_laggedGP.stan", cpp_options = list(stan_threads = TRUE))
+fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 100)
 fit <- rstan::read_stan_csv(fit_parallel$output_files())
-save(fit, file = "fit_laggeddist30sec")
+s_dist30sec <- extract.samples(fit)
 
 #VISIBILITY
 stan.dataLagged$predictor <- standardize(stan.dataLagged$vis)
-m_parallel <- cmdstan_model("Time_laggedGPPar.stan", cpp_options = list(stan_threads = TRUE))
-fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 1500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 1000)
+m_parallel <- cmdstan_model("Stan model code/m_time_laggedGP.stan", cpp_options = list(stan_threads = TRUE))
+fit_parallel <- m_parallel$sample(stan.dataLagged, chains = 2, parallel_chains = 2, threads_per_chain = 40, refresh = 1, iter_warmup = 500 ,adapt_delta = 0.99, max_treedepth = 14, iter_sampling = 100)
 fit <- rstan::read_stan_csv(fit_parallel$output_files())
-save(fit, file = "fit_laggedvis30sec")
+s_vis30sec <- extract.samples(fit)
 
 
 
@@ -134,28 +130,26 @@ save(fit, file = "fit_laggedvis30sec")
 
 par(mfrow = c(2,2), mar = c(1,1,1,0), oma = c(3.25,5,1,0))
 
-load("~/CoinScrounge/fit_laggeddist3min")
 stan.dataLagged$MaxLag <- 36
-s <- extract.samples(fit)
 
-values_coop_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_con[draw,] <- rev(s$time_effects[draw,1,1,] )
+values_coop_con <- matrix(NA, length(s_dist3min$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist3min$lp__)) {
+  values_coop_con[draw,] <- rev(s_dist3min$time_effects[draw,1,1,] )
 }
 
-values_coop_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_dist[draw,] <- rev(s$time_effects[draw,1,2,] ) 
+values_coop_dist <- matrix(NA, length(s_dist3min$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist3min$lp__)) {
+  values_coop_dist[draw,] <- rev(s_dist3min$time_effects[draw,1,2,] ) 
 }
 
-values_comp_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_con[draw,] <- rev(s$time_effects[draw,2,1,] )
+values_comp_con <- matrix(NA, length(s_dist3min$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist3min$lp__)) {
+  values_comp_con[draw,] <- rev(s_dist3min$time_effects[draw,2,1,] )
 }
 
-values_comp_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_dist[draw,] <- rev(s$time_effects[draw,2,2,] ) 
+values_comp_dist <- matrix(NA, length(s_dist3min$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist3min$lp__)) {
+  values_comp_dist[draw,] <- rev(s_dist3min$time_effects[draw,2,2,] ) 
 }
 
 
@@ -214,29 +208,27 @@ shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
 # plot the MAP line, aka the mean mu for each weight
 lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
 
-load("~/CoinScrounge/fit_laggedvis3min")
+
 stan.dataLagged$MaxLag <- 36
-s <- extract.samples(fit)
 
-
-values_coop_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_con[draw,] <- rev(s$time_effects[draw,1,1,] )
+values_coop_con <- matrix(NA, length(s_vis3min$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_coop_con[draw,] <- rev(s_vis3min$time_effects[draw,1,1,] )
 }
 
-values_coop_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_dist[draw,] <- rev(s$time_effects[draw,1,2,] ) 
+values_coop_dist <- matrix(NA, length(s_vis3min$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_coop_dist[draw,] <- rev(s_vis3min$time_effects[draw,1,2,] ) 
 }
 
-values_comp_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_con[draw,] <- rev(s$time_effects[draw,2,1,] )
+values_comp_con <- matrix(NA, length(s_vis3min$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_comp_con[draw,] <- rev(s_vis3min$time_effects[draw,2,1,] )
 }
 
-values_comp_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_dist[draw,] <- rev(s$time_effects[draw,2,2,] ) 
+values_comp_dist <- matrix(NA, length(s_vis3min$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_comp_dist[draw,] <- rev(s_vis3min$time_effects[draw,2,2,] ) 
 }
 
 
@@ -298,31 +290,27 @@ mtext(side = 1, "Time lag [s]", line = 2, outer = TRUE)
 
 mtext(side = 2, "Time-lagged regression weights", line = 1.75, outer = TRUE, cex = 0.9)
 
-
-
 #Inlets
-load("~/CoinScrounge/fit_laggeddist30sec")
 stan.dataLagged$MaxLag <- 30
-s <- extract.samples(fit)
 
-values_coop_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_con[draw,] <- rev(s$time_effects[draw,1,1,] )
+values_coop_con <- matrix(NA, length(s_dist30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_coop_con[draw,] <- rev(s_dist30sec$time_effects[draw,1,1,] )
 }
 
-values_coop_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_dist[draw,] <- rev(s$time_effects[draw,1,2,] ) 
+values_coop_dist <- matrix(NA, length(s_dist30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_coop_dist[draw,] <- rev(s_dist30sec$time_effects[draw,1,2,] ) 
 }
 
-values_comp_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_con[draw,] <- rev(s$time_effects[draw,2,1,] )
+values_comp_con <- matrix(NA, length(s_dist30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_comp_con[draw,] <- rev(s_dist30sec$time_effects[draw,2,1,] )
 }
 
-values_comp_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_dist[draw,] <- rev(s$time_effects[draw,2,2,] ) 
+values_comp_dist <- matrix(NA, length(s_dist30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_comp_dist[draw,] <- rev(s_dist30sec$time_effects[draw,2,2,] ) 
 }
 
 
@@ -384,28 +372,26 @@ lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
 
 
 #Inlets
-load("~/CoinScrounge/fit_laggedvis30sec")
 stan.dataLagged$MaxLag <- 30
-s <- extract.samples(fit)
 
-values_coop_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_con[draw,] <- rev(s$time_effects[draw,1,1,] )
+values_coop_con <- matrix(NA, length(s_vis30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis30sec$lp__)) {
+  values_coop_con[draw,] <- rev(s_vis30sec$time_effects[draw,1,1,] )
 }
 
-values_coop_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_coop_dist[draw,] <- rev(s$time_effects[draw,1,2,] ) 
+values_coop_dist <- matrix(NA, length(s_vis30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis30sec$lp__)) {
+  values_coop_dist[draw,] <- rev(s_vis30sec$time_effects[draw,1,2,] ) 
 }
 
-values_comp_con <- matrix(NA, length(s$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_con[draw,] <- rev(s$time_effects[draw,2,1,] )
+values_comp_con <- matrix(NA, length(s_vis30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis30sec$lp__)) {
+  values_comp_con[draw,] <- rev(s_vis30sec$time_effects[draw,2,1,] )
 }
 
-values_comp_dist <- matrix(NA, length(s$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s$lp__)) {
-  values_comp_dist[draw,] <- rev(s$time_effects[draw,2,2,] ) 
+values_comp_dist <- matrix(NA, length(s_vis30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis30sec$lp__)) {
+  values_comp_dist[draw,] <- rev(s_vis30sec$time_effects[draw,2,2,] ) 
 }
 
 

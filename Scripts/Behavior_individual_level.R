@@ -14,7 +14,7 @@
 ###
 
 #Load relevant data
-load("data/d_rounds")
+load("Data/d_rounds")
 
 ####
 ###
@@ -119,7 +119,6 @@ generated quantities{
 #Run stan model and save the extracted samples
 m_coins <- stan(model_code = poisson_multilevel_coins, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_coins <- extract.samples(m_coins)
-save(s_coins, file = "s_coins")
 
 
 
@@ -240,7 +239,6 @@ generated quantities{
 
 m_rates <- stan(model_code = poisson_multilevel_rates, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_rates <- extract.samples(m_rates)
-save(s_rates, file = "s_rates")
 
 
 #Multilevel Binomial regression for scrounging rates in each condition accounting for individual- and group-level variability
@@ -330,8 +328,6 @@ dat$joining <- ifelse(dat$joining > dat$observed, dat$observed, dat$joining)
 
 m_scrounging <- stan(model_code = binomial_multilevel, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_scrounging <- extract.samples(m_scrounging)
-save(s_scrounging, file = "s_scrounging")
-
 
 
 ####
@@ -437,8 +433,6 @@ generated quantities{
 
 m_distance <- stan(model_code = lognormal_multilevel_distance, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_distance <- extract.samples(m_distance)
-save(s_distance, file = "s_distance")
-
 
 
 ####
@@ -531,8 +525,6 @@ for(i in 1:N){
 
 m_visibility <- stan(model_code = normal_multilevel_visibility, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_visibility <- extract.samples(m_visibility)
-save(s_visibility, file = "s_visibility")
-
 
 
 ###
@@ -540,15 +532,6 @@ save(s_visibility, file = "s_visibility")
 # Create supplementary behavioral plot S1 
 ##
 ###
-
-#Load all stanfits
-load("~/GitHub/CoinScrounge/Stanfits/s_coins")
-load("~/GitHub/CoinScrounge/Stanfits/s_distance")
-load("~/GitHub/CoinScrounge/Stanfits/s_rates")
-load("~/GitHub/CoinScrounge/Stanfits/s_scrounging")
-load("~/GitHub/CoinScrounge/Stanfits/s_distance")
-load("~/GitHub/CoinScrounge/Stanfits/s_visibility")
-
 
 
 #Define plotting function to be re-used later
@@ -1137,8 +1120,6 @@ dat_disc <-          list(N = nrow(d),
 dat_disc$Incentives <- ifelse(dat_disc$Incentives==1, 1,-1)
 m <- stan(model_code = coins_predict, data = dat_disc, iter = 2000, cores = 2, chains = 2, refresh = 10, control = list(adapt_delta=0.95, max_treedepth = 13))       
 s_discoveries <- extract.samples(m)
-save(s_discoveries, file = "s_discoveries")
-
 
 
 ###
@@ -1164,7 +1145,6 @@ dat_join <- list(N = nrow(d),
 dat_join$Incentives <- ifelse(dat_join$Incentives==1, 1,-1)
 m <- stan(model_code = coins_predict, data = dat_join, iter = 2000, cores = 2, chains = 2, refresh = 10, control = list(adapt_delta=0.95, max_treedepth = 13))       
 s_joining <- extract.samples(m)
-save(s_joining, file = "s_joining")
 
 
 ###
@@ -1190,8 +1170,6 @@ dat_both <-             list(N = nrow(d),
 dat_both$Incentives <- ifelse(dat_both$Incentives==1, 1,-1)
 m <- stan(model_code = multiple_coins_predict, data = dat_both, iter = 2000, cores = 2, chains = 2, refresh = 10, control = list(adapt_delta=0.95, max_treedepth = 13))       
 s_both <- extract.samples(m)
-save(s_both, file = "s_both")
-
 
 
 ###
@@ -1221,8 +1199,6 @@ dat_distance$Incentives <- ifelse(dat_distance$Incentives==1, 1,-1)
 
 m <- stan(model_code = coins_predict_dist_vis, data = dat_distance, iter = 2000, cores = 2, chains = 2, refresh = 10, control = list(adapt_delta=0.95, max_treedepth = 13))       
 s_distance <- extract.samples(m)
-save(s_distance, file = "s_distance")
-
 
 ###
 ##
@@ -1247,9 +1223,6 @@ dat_vis$pred[is.na(dat_vis$pred)] <- -10
 dat_vis$Incentives <- ifelse(dat_vis$Incentives==1, 1,-1)
 m <- stan(model_code = coins_predict_dist_vis, data = dat_vis, iter = 2000, cores = 2, chains = 2, refresh = 10, control = list(adapt_delta=0.95, max_treedepth = 13))       
 s_Visibility <- extract.samples(m)
-save(s_Visibility, file = "s_Visibility")
-
-
 
 
 ######
@@ -1263,7 +1236,6 @@ save(s_Visibility, file = "s_Visibility")
 ####
 #####
 ######
-
 
 
 #Define plotting function to be re-used later
@@ -1532,7 +1504,6 @@ dat_sin$pred[is.na(dat_sin$pred)] <- -10
 dat_sin$Incentives <- ifelse(dat_sin$Incentives==1, 1,-1)
 m <- stan(model_code = discoveries_predict, data = dat_sin, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_sin <- extract.samples(m)
-save(s_sin, file = "s_sin")
 
 
 ###
@@ -1557,7 +1528,6 @@ dat_DC$pred[is.na(dat_DC$pred)] <- -10
 dat_DC$Incentives <- ifelse(dat_DC$Incentives==1, 1,-1)
 m <- stan(model_code = discoveries_predict, data = dat_DC, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_DC <- extract.samples(m)
-save(s_DC, file = "s_DC")
 
 ###
 ##
@@ -1582,7 +1552,6 @@ dat_SDDC$Incentives <- ifelse(dat_SDDC$Incentives==1, 1,-1)
 
 m <- stan(model_code = discoveries_predict, data = dat_SDDC, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_SDDC <- extract.samples(m)
-save(s_SDDC, file = "s_SDDC")
 
 
 ###
@@ -1608,7 +1577,6 @@ dat_Hull$Incentives <- ifelse(dat_Hull$Incentives==1, 1,-1)
 
 m <- stan(model_code = discoveries_predict, data = dat_Hull, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_Hull <- extract.samples(m)
-save(s_Hull, file = "s_Hull")
 
 
 #graphics.off()

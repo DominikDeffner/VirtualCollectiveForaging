@@ -5,7 +5,7 @@
 ##
 ###
 
-load("data/d_group")
+load("Data/d_group")
 
 ###
 ##
@@ -890,7 +890,6 @@ dat_dens$Incentives <- ifelse(dat_dens$Incentives==1, 1,-1)
 dat_dens$pred[is.na(dat_dens$pred)] <- -10
 m <- stan(model_code = coins_predict_group, data = dat_dens, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_dens <- extract.samples(m)
-
 
 #graphics.off()
 #pdf("BehavioralPredictorsCoinsGroup.pdf", height = 6, width = 10)

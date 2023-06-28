@@ -26,6 +26,19 @@ Conv2 <- function(xangle, yangle){
   return(list(mu = mu, kappa = kappa))
 } 
 
+dvonmises <- function(y, mu, kappa, log = FALSE) {
+  if (any(kappa < 0)) {
+    stop("kappa must be non-negative")
+  }
+  be <- besselI(kappa, nu = 0, expon.scaled = TRUE)
+  out <- - log(2 * pi * be) + kappa * (cos(y - mu) - 1)
+  if (!log) {
+    out <- exp(out)
+  }
+  out
+}
+
+
 heading_to_radians <- function(ForwardX, ForwardZ){
   angle <- atan2(ForwardZ, ForwardX)
   if (angle < 0) angle <- angle + 2*pi
