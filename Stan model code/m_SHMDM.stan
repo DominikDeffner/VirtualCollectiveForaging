@@ -5,9 +5,10 @@
 // State 1 corresponds to individual exploration, state 2 to social relocation.
 // We then use those inferred states to model how experimental conditions and situational factors influence players' decision making.
 
-// We define function to parallelize computation of the likelihood
 functions {
 
+// We define function to parallelize computation of the likelihood.
+// We parallelize on the level of tracks, as those are the fundamental level of analysis for HMMs.
 real partial_sum(int[] track_slice,
                    int start,
                    int end,
@@ -40,6 +41,7 @@ for(i in start:end){
     // Initialise forward variable
     logp = rep_vector(-log(N), N);
 
+    //Loop over all observations of track
     for (t in 1:T_track[ track_slice[counter] ]){
          t_temp =  index[ track_slice[counter] ] + t ;
        for (n in 1:N) {
@@ -47,7 +49,7 @@ for(i in start:end){
          //Likelihood of being in state n
          logptemp[n] = log_sum_exp(to_vector(log_gamma_tr[t_temp ,n]) + logp);
 
-         //Likelihoods of variables conditional on being in state n
+         //Likelihoods of state-dependent variables conditional on being in state n
          //Turning angles
          if(angles[t_temp]>=(-pi()) ){
           logptemp[n] = logptemp[n] + von_mises_lpdf(angles[t_temp] | loc[n], kappa[n]);
@@ -58,16 +60,14 @@ for(i in start:end){
           logptemp[n] = logptemp[n] + normal_lpdf( deltadist[t_temp] | mu_distance[n], sigma_distance[n]);
          }
 
-         //Closed angles
+         //Relative Bearing (aka closed angle)
          if(closed[t_temp]>=0){
           logptemp[n] = logptemp[n] + lognormal_lpdf( closed[t_temp] | log(mu_closed[n]), sigma_closed[n]);
          }
     }//n
-
        logp = logptemp;
 
     }//t
-
        //Add log forward variable to target at the end of each track
        logprop += log_sum_exp(logp);
    }//id
@@ -77,7 +77,7 @@ for(i in start:end){
 
 data {
  //
- int<lower=0> T; // length of the time series
+ int<lower=0> T; // length of entire dataset
  int N_id;       //number of unique individuals
  int id[T];     // unique participant id
  int N_group;     //number of unique groups
@@ -92,7 +92,7 @@ data {
 
  //Data streams
  real angles[T]; // turning angles
- real closed[T]; // minimum closed angle
+ real closed[T]; // minimum closed angle/relative bearing
  real deltadist[T]; //minimum change in distance to exploiting players
 
  //Predictors for state transitions
@@ -125,12 +125,13 @@ parameters {
  matrix[2,2] logit_p_I_S;
  matrix[2,2] logit_p_S_S;
 
- //Transition predictors for different Incentives conditions and environments
+ //Transition predictors for different incentive conditions and environments
  matrix[2,2] b_vis;
  matrix[2,2] b_dist;
  matrix[2,2] b_numb;
  matrix[2,2] b_time;
 
+  // Varying (aka random) effect terms (non-centered parameterization)
   matrix[24, N_id] z_ID;           //Matrix for our latent individual samples (z scores)
   vector<lower = 0>[24] sigma_ID;  //Standard deviation of transition parameters among individuals
   cholesky_factor_corr[24] Rho_ID; //Cholesky factor for covariance of transition parameters among individuals
@@ -155,13 +156,10 @@ transformed parameters {
 
  //Transform parameters for each state
 for(n in 1:N){
-
 //Turning angles (von Mises)
 loc[n] = atan2(yangle[n], xangle[n]);
 kappa[n] = sqrt(xangle[n]*xangle[n] + yangle[n]*yangle[n]);
-
 }
-
 }
 
 model {
@@ -228,7 +226,7 @@ for (t in 1:T) {
 
 // 1) If agents just stopped exploiting or no other player was exploiting at time t-1
 // (i.e., no social information was available), agents will stay in (or switch to) exploration
-// with very high probability (epsilon is a small number to avoid log(0), i.e., -Inf
+// with very high probability (epsilon is a small number to avoid log(0), i.e., -Inf)
 
 if (Exploit[t] == 1 || No_Exploit[t] == 1){
   for ( i in 1:2 ){
@@ -237,8 +235,7 @@ if (Exploit[t] == 1 || No_Exploit[t] == 1){
   }
 } else{
 
-// 2) If player has not just stopped exploiting and social information is potentially available,
-// agents either explore independently or relocate towards successful group members
+// 2) Otherwise players either explore independently or relocate towards successful group members
 
 //Here we add predictors for transition probabilities
 if (Patch_Prox[t] >-10 ){

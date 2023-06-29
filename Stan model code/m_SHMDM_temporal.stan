@@ -1,8 +1,4 @@
-// Parallelized stan code for SOCIAL HIDDEN MARKO DECISION MODEL (authored by Dominik Deffner: deffner@mpib-berlin.mpg.de)
-// Temporal Trends in State predictors
-// This model infers a time-series of latent behavioral states and their respectives state-dependent distributions.
-// State 1 corresponds to individual exploration, state 2 to social relocation.
-// We then use those inferred states to model how experimental conditions and situational factors influence players' decision making.
+// Parallelized stan code for temporal SOCIAL HIDDEN MARKO DECISION MODEL (authored by Dominik Deffner: deffner@mpib-berlin.mpg.de)
 
 functions {
 

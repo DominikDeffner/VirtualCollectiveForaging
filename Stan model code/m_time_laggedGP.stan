@@ -54,15 +54,13 @@ real partial_sum(int[] y_slice,
 
 // Define the observed variables we feed into the model as data
 data {
-  int N;
+  int N;         //Number of observations
   int MaxLag;    //Maximum Time-lag
   int intervals; //Intervals between lags in seconds
-  int t[N];
-  int Group[N];
-  int Round[N];
-  real predictor[N];
-  int vis[N];
-  int n_exploit[N];
+  int t[N];      //Second in round
+  int Group[N];  //Group id
+  real predictor[N]; //(Time-lagged) predictor varible, i.e., either distance or visibility
+  int n_exploit[N];  //Number of exploiting players at each point in time
   int Environment[N]; // Environment (concentrated = 1 vs. distributed = 2)
   int Incentives[N]; // Incentives (Cooperative = 1 vs competitive = 2)  int outcome[N];
 }
@@ -77,11 +75,9 @@ parameters {
   real<lower=0> eta[2,2];
   real<lower=0> sigma[2,2];
   real<lower=0, upper=1> rho[2,2];
-
 }
 
 transformed parameters {
-
  vector[MaxLag] time_effects[2,2];
 
   for (i in 1:2){
@@ -93,7 +89,6 @@ transformed parameters {
 }
 
 model {
-
   // Define priors for parameters
   to_vector(alpha) ~ normal(0, 1);
   to_vector(b_time) ~ normal(0, 1);
