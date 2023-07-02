@@ -6,8 +6,6 @@ This repository contains the scripts to reproduce all analyses and figures in
 
 ****"Quantifying latent social decision-making in unconstrained human collectives"****
 
-The preprint can be found here:
-
 "master_file.r" sources all other scripts and implements the entire project workflow from raw Unity data to plots in the manuscript.
 
 The "Scripts" folder contains all relevant R scripts for data processing and analysis:
