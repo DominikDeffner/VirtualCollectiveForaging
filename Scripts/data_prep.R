@@ -1,5 +1,10 @@
 
-#Data preparation script to get raw data into analyzable format for later processing and analysis
+###
+##
+# Data preparation script to get raw data into analyzable format for later processing and analysis
+##
+###
+
 
 #Get all file names
 Files_group <- list.files("Data/Group")

@@ -7,12 +7,12 @@
 #Running this file should allow you to reproduce the entire project workflow from raw Unity data to plots in the manuscript.
 
 #However, note that the data preparation as well as the stan models can take quite some time (i.e., a few days). 
-#If you have access to a multi-core cluster, the Hidden Markov stan models should take less than a day, otherwise, they take considerably longer. 
+#If you have access to a multi-core cluster, the Hidden Markov stan models should take less than a day; otherwise, they take considerably longer. 
 #You can of course reduce the number of iterations to make it run faster.
 
 ##################################################################################
 
-#Set working directory (this might be different location for you)
+#Set working directory (this might be a different location for you)
 setwd("~/GitHub/VirtualCollectiveForaging/")
 
 ###
@@ -24,10 +24,10 @@ setwd("~/GitHub/VirtualCollectiveForaging/")
 #Source functions and packages (if you get error messages, please install packages that cause problems; see Readme for infos on Stan-related things)
 source("Scripts/functions.R")
 
-#Run full data preparation script to construct dataframes used for analysis from raw Unity outputs
+#Run full data preparation script to construct dataframes used for analysis from raw Unity data
 source("Scripts/data_prep.R")
 
-#Run preparation script for extended data file and SHMDM data
+#Run preparation script for extended data file and Social Hidden Markov model data
 source("Scripts/HiddenMarkovModels_prep.R")
 
 #Compute behavioral summary statistics for each player/group and round
