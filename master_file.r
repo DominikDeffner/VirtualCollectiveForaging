@@ -45,6 +45,9 @@ source("Scripts/Behavior_individual_level.R")
 #Runs and plots behavioral analyses at group level
 source("Scripts/Behavior_group_level.R")
 
+#Plots main behavioral results (Figure 2)
+source("Scripts/Behavior_main_plot.R")
+
 #Runs and plots behavioral analyses for solo control condition
 source("Scripts/Behavior_solitary.R")
 
