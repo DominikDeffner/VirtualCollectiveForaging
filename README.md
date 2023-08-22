@@ -1,10 +1,10 @@
-# Collective incentives reduce over-exploitation in unconstrained human groups
+# Collective incentives reduce over-exploitation of social information in unconstrained human groups
 
 This repository contains the scripts to reproduce all analyses and figures in 
 
 **Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Romanczuk, P., Wu, C. & Kurvers, R. (submitted):**
 
-****"Collective incentives reduce over-exploitation in unconstrained human groups"****
+****"Collective incentives reduce over-exploitation of social information in unconstrained human groups"****
 
 "master_file.r" sources all other scripts and implements the entire project workflow from raw Unity data to plots in the manuscript.
 

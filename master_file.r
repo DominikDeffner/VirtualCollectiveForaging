@@ -1,6 +1,6 @@
 ##################################################################################
 
-#Collective incentives reduce over-exploitation in unconstrained human groups
+#Collective incentives reduce over-exploitation of social information in unconstrained human groups
 #authored by Dominik Deffner (deffner@mpib-berlin.mpg.de)
 
 #MASTER FILE to source all other scripts
