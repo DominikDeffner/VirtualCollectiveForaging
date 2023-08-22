@@ -25,7 +25,6 @@ The "Scripts" folder contains all relevant R scripts for data processing and ana
 - "CollectiveDynamics.R" runs and plots collective visual-spatial dynamics analyses using time-lagged Gaussian-process regressions
 
 The "Stan model code" folder contains stan files for the (baseline and time-varying) Social Hidden Markov Decision model as well as the time-lagged Gaussian-process model
-
 - "m_SHMDM.stan" is the baseline HMM (called in "HiddenMarkovModels_baseline.R")
 - "m_SHMDM_temporal.stan" is the time-varying HMM (called in "HiddenMarkovModels_temporal.R")
 - "m_temporal_success.stan" is monotonic-effect model for success over time (called in "HiddenMarkovModels_temporal.R")
