@@ -1,10 +1,10 @@
-# Quantifying latent social decision-making in unconstrained human collectives
+# Collective incentives reduce over-exploitation in unconstrained human groups
 
 This repository contains the scripts to reproduce all analyses and figures in 
 
-**Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Wu, C., Romanczuk, P. & Kurvers, R. (submitted):**
+**Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Romanczuk, P., Wu, C. & Kurvers, R. (submitted):**
 
-****"Quantifying latent social decision-making in unconstrained human collectives"****
+****"Collective incentives reduce over-exploitation in unconstrained human groups"****
 
 The preprint can be found here:
 
@@ -18,6 +18,7 @@ The "Scripts" folder contains all relevant R scripts for data processing and ana
 - "Behavior_prep.R" computes behavioral summary statistics for each player/group and round
 - "Behavior_individual_level.R" runs and plots behavioral analyses at individual level
 - "Behavior_group_level.R" runs and plots behavioral analyses at group level
+- "Behavior_main_plot" produces main behavioral plot (Fig.2)
 - "Behavior_solitary.R" runs and plots behavioral analyses for solo control condition
 - "HiddenMarkovModels_baseline.R" runs baseline Social Hidden Markov Decision model and produces main text plots
 - "Viterbi.r" computes most likely state sequences for all participants through Viterbi algorithm

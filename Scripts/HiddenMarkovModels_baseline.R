@@ -449,7 +449,7 @@ s_time_group <- extract.samples(m_time_group)
 ####
 ###
 ##
-# Script for Fig. 3: Computational modelling results: state predictors. 
+# Script for Fig. 3: State predictors and their adaptive consequences 
 ##
 ###
 ####

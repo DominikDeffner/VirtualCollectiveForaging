@@ -24,7 +24,7 @@ real partial_sum(int[] y_slice,
               counter += 1;
 
                 logp +=  bernoulli_logit_lpmf(y_slice[counter] | (alpha[Incentives[n], Environment[n] ] + offset_ID[ id[n], Environment[n] ] + offset_Group[ group[n], Environment[n] ]) +
-                                                            (b_time_max[Incentives[n], Environment[n] ] + offset_ID[ id[n], 2+Environment[n] ] + offset_Group[ group[n], 2+ Environment[n] ])*
+                                                            (b_time_max[Incentives[n], Environment[n] ] + offset_ID[ id[n], 2+Environment[n] ] + offset_Group[ group[n], 2+Environment[n] ])*
                                                         sum( delta_time[Incentives[n], Environment[n] ][1:TimeInRound[n]]));
               }
 
@@ -84,13 +84,13 @@ model{
 
   //Define prior distribution of varying group effects
   to_vector(z_ID) ~ normal(0, 1);
-  sigma_ID ~ exponential(1);
+  sigma_ID ~ exponential(3);
   Rho_ID ~ lkj_corr_cholesky(4);
 
   to_vector(z_Group) ~ normal(0, 1);
-  sigma_Group ~ exponential(1);
+  sigma_Group ~ exponential(3);
   Rho_Group ~ lkj_corr_cholesky(4);
-  
+
 //Monotonic Effects
 for(i in 1:2){
   for (j in 1:2){
@@ -98,7 +98,7 @@ for(i in 1:2){
    b_time_max[i,j] ~ normal(0,1);
 
    //Offsets
-   b_time[i,j] ~ dirichlet( rep_vector(4,11) );
+   b_time[i,j] ~ dirichlet( rep_vector(2,11) );
    delta_time[i,j] = append_row( 0 , b_time[i,j]);
   }
 }

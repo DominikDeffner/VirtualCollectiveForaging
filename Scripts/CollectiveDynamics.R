@@ -124,11 +124,199 @@ fit <- rstan::read_stan_csv(fit_parallel$output_files())
 s_vis30sec <- extract.samples(fit)
 
 
+#graphics.off()
+#pdf("LaggedSuccess.pdf", height = 3, width = 8)
+
+layout(matrix(c(1,1,2,2,3, 4,4, 5,5), 1, 9, byrow = TRUE))
+
+
+par(mar = c(0,1,1,0), oma = c(3.5,2.5,2.5,0))
+
+stan.dataLagged$MaxLag <- 30
+
+values_coop_con <- matrix(NA, length(s_dist30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_coop_con[draw,] <- rev(s_dist30sec$time_effects[draw,1,1,] )
+}
+
+values_coop_dist <- matrix(NA, length(s_dist30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_coop_dist[draw,] <- rev(s_dist30sec$time_effects[draw,1,2,] ) 
+}
+
+values_comp_con <- matrix(NA, length(s_dist30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_comp_con[draw,] <- rev(s_dist30sec$time_effects[draw,2,1,] )
+}
+
+values_comp_dist <- matrix(NA, length(s_dist30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_dist30sec$lp__)) {
+  values_comp_dist[draw,] <- rev(s_dist30sec$time_effects[draw,2,2,] ) 
+}
+
+
+#Group Incentives
+plot(values_coop_con[1,], type = "n", ylab = "", xlab = "", bty = "n", ylim = c(-0.4, 0.4), xaxt = "n", yaxt = "n")
+axis(1, at = seq(0,30, 5), labels = seq(-30,0, 5), cex.axis = 0.9)
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
+
+mtext(side = 3, "Group Incentives", line = 0, cex = 0.8)
+axis(2, at = seq(-0.4,0.4, 0.4),  cex.axis = 0.9)
+mtext(side = 2, "Time-lagged regression weights", line = 2.5, cex = 0.75)
+
+mtext(side = 3, "a", at = -1, line = 2, cex = 1)
+
+abline(h = 0, lty = 2, col = "grey")
+# summarize the distribution of mu
+mu.mean <- apply( values_coop_con , 2 , mean )
+mu.PI <-  apply( values_coop_con , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
+
+# summarize the distribution of mu
+mu.mean <- apply( values_coop_dist , 2 , mean )
+mu.PI <-  apply( values_coop_dist , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
+
+mtext(side = 3, at = 30, "Distance -> Collective Success", line = 2, font = 3, cex = 1 )
+legend("topleft", title = "Environment", c("Concentrated", "Distributed"),col = c(alpha(col.pal[2],alpha = 0.9),alpha(col.pal[3],alpha = 0.9)), cex = 0.8, lwd = 8, lty = 1, bty = "n")
+
+
+#Individual Incentives
+plot(values_comp_con[1,], type = "n", ylab = "", xlab = "",bty = "n", ylim = c(-0.4, 0.4), xaxt = "n", yaxt = "n")
+abline(h = 0, lty = 2, col = "grey")
+mtext(side = 3, "Individual Incentives", line = 0, cex = 0.8)
+axis(1, at = seq(0,30, 5), labels = seq(-30,0, 5), cex.axis = 0.9)
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
+
+# summarize the distribution of mu
+mu.mean <- apply( values_comp_con , 2 , mean )
+mu.PI <-  apply( values_comp_con , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
+
+
+# summarize the distribution of mu
+mu.mean <- apply( values_comp_dist , 2 , mean )
+mu.PI <-  apply( values_comp_dist , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
+
+plot.new()
+stan.dataLagged$MaxLag <- 30
+
+values_coop_con <- matrix(NA, length(s_vis30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_coop_con[draw,] <- rev(s_vis30sec$time_effects[draw,1,1,] )
+}
+
+values_coop_dist <- matrix(NA, length(s_vis30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_coop_dist[draw,] <- rev(s_vis30sec$time_effects[draw,1,2,] ) 
+}
+
+values_comp_con <- matrix(NA, length(s_vis30sec$lp__), stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_comp_con[draw,] <- rev(s_vis30sec$time_effects[draw,2,1,] )
+}
+
+values_comp_dist <- matrix(NA, length(s_vis30sec$lp__),  stan.dataLagged$MaxLag )
+for (draw in 1:length(s_vis3min$lp__)) {
+  values_comp_dist[draw,] <- rev(s_vis30sec$time_effects[draw,2,2,] ) 
+}
+
+
+#Group Incentives
+plot(values_coop_con[1,], type = "n", ylab = "", xlab = "", bty = "n", ylim = c(-1, 0.2), xaxt = "n", yaxt = "n")
+axis(1, at = seq(0,30, 5), labels = seq(-30,0, 5), cex.axis = 0.9)
+mtext(side = 3, "Group Incentives", line = 0, cex = 0.8)
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
+mtext(side = 2, "Time-lagged regression weights", line = 2.5, cex = 0.75)
+
+mtext(side = 3, "b", at = -1, line = 2, cex = 1)
+
+axis(2, at = seq(-1,0.2, 0.4),  cex.axis = 0.9)
+
+abline(h = 0, lty = 2, col = "grey")
+# summarize the distribution of mu
+mu.mean <- apply( values_coop_con , 2 , mean )
+mu.PI <-  apply( values_coop_con , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
+
+
+# summarize the distribution of mu
+mu.mean <- apply( values_coop_dist , 2 , mean )
+mu.PI <-  apply( values_coop_dist , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
+
+mtext(side = 3, at = 30, "Visibility -> Collective Success", line = 2, font = 3, cex = 1 )
+
+#Individual Incentives
+plot(values_comp_con[1,], type = "n", ylab = "", xlab = "",bty = "n", ylim = c(-1, 0.2), xaxt = "n", yaxt = "n")
+axis(1, at = seq(0,30, 5), labels = seq(-30,0, 5), cex.axis = 0.9)
+abline(h = 0, lty = 2, col = "grey")
+mtext(side = 3, "Individual Incentives", line = 0, cex = 0.8)
+
+# summarize the distribution of mu
+mu.mean <- apply( values_comp_con , 2 , mean )
+mu.PI <-  apply( values_comp_con , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
+
+
+# summarize the distribution of mu
+mu.mean <- apply( values_comp_dist , 2 , mean )
+mu.PI <-  apply( values_comp_dist , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
+
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
+
+#dev.off()
+
 
 #graphics.off()
-#pdf("LaggedSuccess.pdf", height = 6, width = 7)
+#pdf("LaggedSuccess3min.pdf", height = 3, width = 8)
 
-par(mfrow = c(2,2), mar = c(1,1,1,0), oma = c(3.25,5,1,0))
+layout(matrix(c(1,1,2,2,3, 4,4, 5,5), 1, 9, byrow = TRUE))
+
+
+par(mar = c(0,1,1,0), oma = c(3.5,2.5,2.5,0))
 
 stan.dataLagged$MaxLag <- 36
 
@@ -154,8 +342,15 @@ for (draw in 1:length(s_dist3min$lp__)) {
 
 
 #Group Incentives
-plot(values_coop_con[1,], type = "n", ylab = "", xlab = "", bty = "n", ylim = c(-0.4, 0.4), xaxt = "n")
-mtext(side = 3, "Group Incentives", line = 0.5, cex = 1.2)
+plot(values_coop_con[1,], type = "n", ylab = "", xlab = "", bty = "n", ylim = c(-0.4, 0.4), xaxt = "n", yaxt = "n")
+axis(1, at = seq(0,36, 6), labels = seq(-180,0, 30))
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
+
+mtext(side = 3, "Group Incentives", line = 0, cex = 0.8)
+axis(2, at = seq(-0.4,0.4, 0.4),  cex.axis = 0.9)
+mtext(side = 2, "Time-lagged regression weights", line = 2.5, cex = 0.75)
+
+mtext(side = 3, "a", at = -1, line = 2, cex = 1)
 
 abline(h = 0, lty = 2, col = "grey")
 # summarize the distribution of mu
@@ -178,14 +373,16 @@ shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
 # plot the MAP line, aka the mean mu for each weight
 lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
 
-mtext(side = 2, "Distance -> Collective Success", line = 5, font = 3, cex = 1 )
-legend("topleft", title = "Environment", c("Concentrated", "Distributed"),col = c(alpha(col.pal[2],alpha = 0.9),alpha(col.pal[3],alpha = 0.9)), cex = 1, lwd = 8, lty = 1, bty = "n")
+mtext(side = 3, at = 30, "Distance -> Collective Success", line = 2, font = 3, cex = 1 )
+legend("topleft", title = "Environment", c("Concentrated", "Distributed"),col = c(alpha(col.pal[2],alpha = 0.9),alpha(col.pal[3],alpha = 0.9)), cex = 0.8, lwd = 8, lty = 1, bty = "n")
 
 
 #Individual Incentives
 plot(values_comp_con[1,], type = "n", ylab = "", xlab = "",bty = "n", ylim = c(-0.4, 0.4), xaxt = "n", yaxt = "n")
 abline(h = 0, lty = 2, col = "grey")
-mtext(side = 3, "Individual Incentives", line = 0.5, cex = 1.2)
+mtext(side = 3, "Individual Incentives", line = 0, cex = 0.8)
+axis(1, at = seq(0,36, 6), labels = seq(-180,0, 30))
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
 
 # summarize the distribution of mu
 mu.mean <- apply( values_comp_con , 2 , mean )
@@ -208,7 +405,7 @@ shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
 # plot the MAP line, aka the mean mu for each weight
 lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
 
-
+plot.new()
 stan.dataLagged$MaxLag <- 36
 
 values_coop_con <- matrix(NA, length(s_vis3min$lp__), stan.dataLagged$MaxLag )
@@ -233,37 +430,45 @@ for (draw in 1:length(s_vis3min$lp__)) {
 
 
 #Group Incentives
-plot(values_coop_con[1,], type = "n", ylab = "", xlab = "", bty = "n", ylim = c(-0.7, 0.2), xaxt = "n")
+plot(values_coop_con[1,], type = "n", ylab = "", xlab = "", bty = "n", ylim = c(-1, 0.2), xaxt = "n", yaxt = "n")
+axis(1, at = seq(0,36, 6), labels = seq(-180,0, 30))
+mtext(side = 3, "Group Incentives", line = 0, cex = 0.8)
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
+mtext(side = 2, "Time-lagged regression weights", line = 2.5, cex = 0.75)
 
+mtext(side = 3, "b", at = -1, line = 2, cex = 1)
+
+axis(2, at = seq(-1,0.2, 0.4),  cex.axis = 0.9)
+
+abline(h = 0, lty = 2, col = "grey")
+# summarize the distribution of mu
+mu.mean <- apply( values_coop_con , 2 , mean )
+mu.PI <-  apply( values_coop_con , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
+
+
+# summarize the distribution of mu
+mu.mean <- apply( values_coop_dist , 2 , mean )
+mu.PI <-  apply( values_coop_dist , 2 , PI , prob=0.9 )
+
+# plot a shaded region for 89% PI
+shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
+
+# plot the MAP line, aka the mean mu for each weight
+lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
+
+mtext(side = 3, at = 30, "Visibility -> Collective Success", line = 2, font = 3, cex = 1 )
+
+#Individual Incentives
+plot(values_comp_con[1,], type = "n", ylab = "", xlab = "",bty = "n", ylim = c(-1, 0.2), xaxt = "n", yaxt = "n")
 axis(1, at = seq(0,36, 6), labels = seq(-180,0, 30))
 abline(h = 0, lty = 2, col = "grey")
-# summarize the distribution of mu
-mu.mean <- apply( values_coop_con , 2 , mean )
-mu.PI <-  apply( values_coop_con , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
-
-
-# summarize the distribution of mu
-mu.mean <- apply( values_coop_dist , 2 , mean )
-mu.PI <-  apply( values_coop_dist , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
-
-mtext(side = 2, "Visibility -> Collective Success", line = 5, font = 3, cex = 1 )
-
-#Individual Incentives
-plot(values_comp_con[1,], type = "n", ylab = "", xlab = "",bty = "n", ylim = c(-0.7, 0.2), xaxt = "n", yaxt = "n")
-axis(1, at = seq(0,36, 6), labels = seq(-180,0, 30))
-abline(h = 0, lty = 2, col = "grey")
+mtext(side = 3, "Individual Incentives", line = 0, cex = 0.8)
 
 # summarize the distribution of mu
 mu.mean <- apply( values_comp_con , 2 , mean )
@@ -286,170 +491,6 @@ shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
 # plot the MAP line, aka the mean mu for each weight
 lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
 
-mtext(side = 1, "Time lag [s]", line = 2, outer = TRUE)
-
-mtext(side = 2, "Time-lagged regression weights", line = 1.75, outer = TRUE, cex = 0.9)
-
-#Inlets
-stan.dataLagged$MaxLag <- 30
-
-values_coop_con <- matrix(NA, length(s_dist30sec$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s_dist30sec$lp__)) {
-  values_coop_con[draw,] <- rev(s_dist30sec$time_effects[draw,1,1,] )
-}
-
-values_coop_dist <- matrix(NA, length(s_dist30sec$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s_dist30sec$lp__)) {
-  values_coop_dist[draw,] <- rev(s_dist30sec$time_effects[draw,1,2,] ) 
-}
-
-values_comp_con <- matrix(NA, length(s_dist30sec$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s_dist30sec$lp__)) {
-  values_comp_con[draw,] <- rev(s_dist30sec$time_effects[draw,2,1,] )
-}
-
-values_comp_dist <- matrix(NA, length(s_dist30sec$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s_dist30sec$lp__)) {
-  values_comp_dist[draw,] <- rev(s_dist30sec$time_effects[draw,2,2,] ) 
-}
-
-
-par(fig = c(0.02,0.22, 0.55, 0.75), new = T)  
-
-#Group Incentives
-plot(values_coop_con[1,], type = "n", ylab = "", xlab = "",  ylim = c(-0.4, 0.4),yaxt = "n", xaxt = "n", cex.axis =0.6)
-axis(1, at = seq(0,30, 10), labels = seq(-30,0, 10), cex.axis = 0.6)
-abline(h = 0, lty = 2, col = "grey")
-# summarize the distribution of mu
-mu.mean <- apply( values_coop_con , 2 , mean )
-mu.PI <-  apply( values_coop_con , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
-
-
-# summarize the distribution of mu
-mu.mean <- apply( values_coop_dist , 2 , mean )
-mu.PI <-  apply( values_coop_dist , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
-
-
-par(fig = c(0.52,0.72, 0.55, 0.75), new = T)  
-
-#Individual Incentives
-plot(values_comp_con[1,], type = "n", ylab = "", xlab = "",  ylim = c(-0.4, 0.4),yaxt = "n", xaxt = "n", cex.axis = 0.6)
-axis(1, at = seq(0,30, 10), labels = seq(-30,0, 10), cex.axis = 0.6)
-abline(h = 0, lty = 2, col = "grey")
-
-# summarize the distribution of mu
-mu.mean <- apply( values_comp_con , 2 , mean )
-mu.PI <-  apply( values_comp_con , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
-
-
-# summarize the distribution of mu
-mu.mean <- apply( values_comp_dist , 2 , mean )
-mu.PI <-  apply( values_comp_dist , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
-
-
-#Inlets
-stan.dataLagged$MaxLag <- 30
-
-values_coop_con <- matrix(NA, length(s_vis30sec$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s_vis30sec$lp__)) {
-  values_coop_con[draw,] <- rev(s_vis30sec$time_effects[draw,1,1,] )
-}
-
-values_coop_dist <- matrix(NA, length(s_vis30sec$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s_vis30sec$lp__)) {
-  values_coop_dist[draw,] <- rev(s_vis30sec$time_effects[draw,1,2,] ) 
-}
-
-values_comp_con <- matrix(NA, length(s_vis30sec$lp__), stan.dataLagged$MaxLag )
-for (draw in 1:length(s_vis30sec$lp__)) {
-  values_comp_con[draw,] <- rev(s_vis30sec$time_effects[draw,2,1,] )
-}
-
-values_comp_dist <- matrix(NA, length(s_vis30sec$lp__),  stan.dataLagged$MaxLag )
-for (draw in 1:length(s_vis30sec$lp__)) {
-  values_comp_dist[draw,] <- rev(s_vis30sec$time_effects[draw,2,2,] ) 
-}
-
-
-par(fig = c(0.02,0.22, 0.1, 0.3), new = T)  
-
-#Group Incentives
-plot(values_coop_con[1,], type = "n", ylab = "", xlab = "",  ylim = c(-0.8, 0.2),yaxt = "n", xaxt = "n", cex.axis =0.6)
-axis(1, at = seq(0,30, 10), labels = seq(-30,0, 10), cex.axis = 0.6)
-abline(h = 0, lty = 2, col = "grey")
-# summarize the distribution of mu
-mu.mean <- apply( values_coop_con , 2 , mean )
-mu.PI <-  apply( values_coop_con , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
-
-
-# summarize the distribution of mu
-mu.mean <- apply( values_coop_dist , 2 , mean )
-mu.PI <-  apply( values_coop_dist , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
-
-par(fig = c(0.52,0.72, 0.1, 0.3), new = T)  
-
-#Individual Incentives
-plot(values_comp_con[1,], type = "n", ylab = "", xlab = "",  ylim = c(-0.8, 0.2),yaxt = "n", xaxt = "n", cex.axis = 0.6)
-axis(1, at = seq(0,30, 10), labels = seq(-30,0, 10), cex.axis = 0.6)
-abline(h = 0, lty = 2, col = "grey")
-
-# summarize the distribution of mu
-mu.mean <- apply( values_comp_con , 2 , mean )
-mu.PI <-  apply( values_comp_con , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[2], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[2] )
-
-
-# summarize the distribution of mu
-mu.mean <- apply( values_comp_dist , 2 , mean )
-mu.PI <-  apply( values_comp_dist , 2 , PI , prob=0.9 )
-
-# plot a shaded region for 89% PI
-shade( mu.PI , 1:stan.dataLagged$MaxLag , col =  alpha(col.pal[3], alpha = 0.4))
-
-# plot the MAP line, aka the mean mu for each weight
-lines( 1:stan.dataLagged$MaxLag , mu.mean, col = col.pal[3] )
-
+mtext(side = 1, "Time lag [s]", line = 2.5,cex = 0.75)
 
 #dev.off()
-

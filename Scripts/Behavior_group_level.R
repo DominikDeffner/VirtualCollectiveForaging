@@ -611,23 +611,23 @@ behavioral_plotting_fct(            ylim = c(5,50),
                                     
                                     con_coop   =  dat$dist[dat$Environment==1 & dat$Incentives==1],
                                     con_coop_ids  =  dat$id[dat$Environment==1 & dat$Incentives==1],
-                                    con_coop_mean =  mean(s_distance$avg_distance[,1,1]),
-                                    con_coop_hpdi  =  HPDI(s_distance$avg_distance[,1,1]),
+                                    con_coop_mean =  mean(s_distance_group$avg_distance[,1,1]),
+                                    con_coop_hpdi  =  HPDI(s_distance_group$avg_distance[,1,1]),
                                     
                                     dist_coop  =  dat$dist[dat$Environment==2 & dat$Incentives==1],
                                     dist_coop_ids   =  dat$id[dat$Environment==2 & dat$Incentives==1],
-                                    dist_coop_mean  =  mean(s_distance$avg_distance[,1,2]),
-                                    dist_coop_hpdi  =  HPDI(s_distance$avg_distance[,1,2]),
+                                    dist_coop_mean  =  mean(s_distance_group$avg_distance[,1,2]),
+                                    dist_coop_hpdi  =  HPDI(s_distance_group$avg_distance[,1,2]),
                                     
                                     con_comp  =  dat$dist[dat$Environment==1 & dat$Incentives==2],
                                     con_comp_ids   =  dat$id[dat$Environment==1 & dat$Incentives==2],
-                                    con_comp_mean  =  mean(s_distance$avg_distance[,2,1]),
-                                    con_comp_hpdi =  HPDI(s_distance$avg_distance[,2,1]),
+                                    con_comp_mean  =  mean(s_distance_group$avg_distance[,2,1]),
+                                    con_comp_hpdi =  HPDI(s_distance_group$avg_distance[,2,1]),
                                     
                                     dist_comp  =  dat$dist[dat$Environment==2 & dat$Incentives==2],
                                     dist_comp_ids  =  dat$id[dat$Environment==2 & dat$Incentives==2],
-                                    dist_comp_mean  =  mean(s_distance$avg_distance[,2,2]),
-                                    dist_comp_hpdi  = HPDI(s_distance$avg_distance[,2,2]))
+                                    dist_comp_mean  =  mean(s_distance_group$avg_distance[,2,2]),
+                                    dist_comp_hpdi  = HPDI(s_distance_group$avg_distance[,2,2]))
 
 
 
@@ -652,23 +652,23 @@ behavioral_plotting_fct(            ylim = c(0.7,1.2),
                                     
                                     con_coop   =  dat$visibility[dat$Environment==1 & dat$Incentives==1],
                                     con_coop_ids  =  dat$id[dat$Environment==1 & dat$Incentives==1],
-                                    con_coop_mean =  mean(s_visibility$mean_visibility[,1,1]),
-                                    con_coop_hpdi  =  HPDI(s_visibility$mean_visibility[,1,1]),
+                                    con_coop_mean =  mean(s_visibility_group$mean_visibility[,1,1]),
+                                    con_coop_hpdi  =  HPDI(s_visibility_group$mean_visibility[,1,1]),
                                     
                                     dist_coop  =  dat$visibility[dat$Environment==2 & dat$Incentives==1],
                                     dist_coop_ids   =  dat$id[dat$Environment==2 & dat$Incentives==1],
-                                    dist_coop_mean  =  mean(s_visibility$mean_visibility[,1,2]),
-                                    dist_coop_hpdi  =  HPDI(s_visibility$mean_visibility[,1,2]),
+                                    dist_coop_mean  =  mean(s_visibility_group$mean_visibility[,1,2]),
+                                    dist_coop_hpdi  =  HPDI(s_visibility_group$mean_visibility[,1,2]),
                                     
                                     con_comp  =  dat$visibility[dat$Environment==1 & dat$Incentives==2],
                                     con_comp_ids   =  dat$id[dat$Environment==1 & dat$Incentives==2],
-                                    con_comp_mean  =  mean(s_visibility$mean_visibility[,2,1]),
-                                    con_comp_hpdi =  HPDI(s_visibility$mean_visibility[,2,1]),
+                                    con_comp_mean  =  mean(s_visibility_group$mean_visibility[,2,1]),
+                                    con_comp_hpdi =  HPDI(s_visibility_group$mean_visibility[,2,1]),
                                     
                                     dist_comp  =  dat$visibility[dat$Environment==2 & dat$Incentives==2],
                                     dist_comp_ids  =  dat$id[dat$Environment==2 & dat$Incentives==2],
-                                    dist_comp_mean  =  mean(s_visibility$mean_visibility[,2,2]),
-                                    dist_comp_hpdi  = HPDI(s_visibility$mean_visibility[,2,2]))
+                                    dist_comp_mean  =  mean(s_visibility_group$mean_visibility[,2,2]),
+                                    dist_comp_hpdi  = HPDI(s_visibility_group$mean_visibility[,2,2]))
 
 
 # Density
@@ -708,9 +708,6 @@ behavioral_plotting_fct(            ylim = c(1,4),
 
 
 #dev.off()
-
-
-
 
 
 
@@ -769,7 +766,7 @@ model{
 
  //Priors
  alpha ~ normal(5, 0.5);
- beta_Incentive ~ normal(0,1);
+ beta_Incentive ~ normal(0,0.5);
  weight ~ normal(0, 1); 
  sigma ~ exponential(3); 
  
@@ -791,45 +788,6 @@ for(i in 1:N){
 
 "
 
-###
-##
-# Discoveries
-##
-###
-
-
-#Prepare data list
-dat_disc <-             list(N = nrow(d_group), 
-                             N_group = length(unique(d_group$id))  , 
-                             group = d_group$id,
-                             Environment = ifelse(d_group$Env == "C",1,2), 
-                             Incentives = ifelse(d_group$Pay == "Coop",1,2),
-                             pred = d_group$discoveries,
-                             coins = d_group$Coins )
-
-dat_disc$Incentives <- ifelse(dat_disc$Incentives==1, 1,-1)
-m <- stan(model_code = coins_predict_group, data = dat_disc, iter = 2000, cores = 2, chains = 2, refresh = 10)
-s_discoveries <- extract.samples(m)
-
-###
-##
-# Joining
-##
-###
-
-#Prepare data list
-
-dat_join <-             list(N = nrow(d_group), 
-                             N_group = length(unique(d_group$id))  , 
-                             group = d_group$id,
-                             Environment = ifelse(d_group$Env == "C",1,2), 
-                             Incentives = ifelse(d_group$Pay == "Coop",1,2),
-                             pred = d_group$joining,
-                             coins = d_group$Coins )
-
-dat_join$Incentives <- ifelse(dat_join$Incentives==1, 1,-1)
-m <- stan(model_code = coins_predict_group, data = dat_join, iter = 2000, cores = 2, chains = 2, refresh = 10)
-s_joining <- extract.samples(m)
 
 ###
 ##
@@ -838,38 +796,19 @@ s_joining <- extract.samples(m)
 ###
 
 #Prepare data list
-dat_dist <-             list(N = nrow(d_group), 
-                             N_group = length(unique(d_group$id))  , 
-                             group = d_group$id,
-                             Environment = ifelse(d_group$Env == "C",1,2), 
-                             Incentives = ifelse(d_group$Pay == "Coop",1,2),
-                             pred = d_group$Distance,
-                             coins = d_group$Coins )
+dat_dist_group <-             list(N = nrow(d_group), 
+                                   N_group = length(unique(d_group$id))  , 
+                                   group = d_group$id,
+                                   Environment = ifelse(d_group$Env == "C",1,2), 
+                                   Incentives = ifelse(d_group$Pay == "Coop",1,2),
+                                   pred = standardize(d_group$Distance),
+                                   coins = d_group$Coins )
 
-dat_dist$Incentives <- ifelse(dat_dist$Incentives==1, 1,-1)
-dat_dist$pred[is.na(dat_dist$pred)] <- -10
-m <- stan(model_code = coins_predict_group, data = dat_dist, iter = 2000, cores = 2, chains = 2, refresh = 10)
-s_distance <- extract.samples(m)
+dat_dist_group$Incentives <- ifelse(dat_dist_group$Incentives==1, 1,-1)
+dat_dist_group$pred[is.na(dat_dist_group$pred)] <- -10
+m <- stan(model_code = coins_predict_group, data = dat_dist_group, iter = 2000, cores = 2, chains = 2, refresh = 10)
+s_distance_group <- extract.samples(m)
 
-###
-##
-# Visibility
-##
-###
-
-#Prepare data list
-dat_vis <-             list(N = nrow(d_group), 
-                            N_group = length(unique(d_group$id))  , 
-                            group = d_group$id,
-                            Environment = ifelse(d_group$Env == "C",1,2), 
-                            Incentives = ifelse(d_group$Pay == "Coop",1,2),
-                            pred = d_group$Visibility,
-                            coins = d_group$Coins )
-
-dat_vis$Incentives <- ifelse(dat_vis$Incentives==1, 1,-1)
-dat_vis$pred[is.na(dat_vis$pred)] <- -10
-m <- stan(model_code = coins_predict_group, data = dat_vis, iter = 2000, cores = 2, chains =2, refresh = 10)
-s_visibility <- extract.samples(m)
 
 ###
 ##
@@ -890,108 +829,3 @@ dat_dens$Incentives <- ifelse(dat_dens$Incentives==1, 1,-1)
 dat_dens$pred[is.na(dat_dens$pred)] <- -10
 m <- stan(model_code = coins_predict_group, data = dat_dens, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_dens <- extract.samples(m)
-
-#graphics.off()
-#pdf("BehavioralPredictorsCoinsGroup.pdf", height = 6, width = 10)
-
-par(mfrow = c(2,5), mar = c(0.5,0,0,1), oma = c(4,6,1,0))
-
-#Concentrated
-plot(dat_disc$pred[dat_disc$Environment==1], dat_disc$coins[dat_disc$Environment==1],  col = alpha(col.pal[2], alpha = 0.4), pch = ifelse(dat_disc$Incentives[dat_disc$Environment==1]==1, 1, 16), bty = "n", xlim = c(0,12), ylim = c(50,200) , xaxt = "n")
-plot_regression_line(s_discoveries, dat_disc$pred, 1, color = col.pal[2])
-mtext("Concentrated", side = 2, line = 3)
-
-mean <- round(mean(s_discoveries$weight[,1]),2)
-lower <- round(PI(s_discoveries$weight[,1], 0.9)[1],2)
-upper <- round(PI(s_discoveries$weight[,1], 0.9)[2],2)
-text(5, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-
-plot(dat_join$pred[dat_join$Environment==1], dat_join$coins[dat_join$Environment==1],  col = alpha(col.pal[2], alpha = 0.4), pch = ifelse(dat_join$Incentives[dat_join$Environment==1]==1, 1, 16)  , bty = "n", xlim = c(0,10), ylim = c(50,200), yaxt = "n", xaxt = "n")
-plot_regression_line(s_joining, dat_join$pred, 1, color = col.pal[2])
-
-mean <- round(mean(s_joining$weight[,1]),2)
-lower <- round(PI(s_joining$weight[,1], 0.9)[1],4)
-upper <- round(PI(s_joining$weight[,1], 0.9)[2],4)
-text(5, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-plot(dat_dist$pred[dat_dist$Environment==1], dat_dist$coins[dat_dist$Environment==1],  col = alpha(col.pal[2], alpha = 0.4), pch = ifelse(dat_dist$Incentives[dat_dist$Environment==1]==1, 1, 16)  , bty = "n", xlim = c(10,50), ylim = c(50,200), yaxt = "n", xaxt = "n")
-plot_regression_line(s_distance, dat_dist$pred, 1, color = col.pal[2])
-
-mean <- round(mean(s_distance$weight[,1]),2)
-lower <- round(PI(s_distance$weight[,1], 0.9)[1],3)
-upper <- round(PI(s_distance$weight[,1], 0.9)[2],3)
-text(25, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-
-plot(dat_vis$pred[dat_vis$Environment==1], dat_vis$coins[dat_vis$Environment==1],col = alpha(col.pal[2], alpha = 0.4), pch = ifelse(dat_vis$Incentives[dat_vis$Environment==1]==1, 1, 16)  , bty = "n", xlim = c(0.8,1.2), ylim = c(50,200) , yaxt = "n", xaxt = "n")
-plot_regression_line(s_visibility, dat_vis$pred, 1, color = col.pal[2])
-
-mean <- round(mean(s_visibility$weight[,1]),2)
-lower <- round(PI(s_visibility$weight[,1], 0.9)[1],2)
-upper <- round(PI(s_visibility$weight[,1], 0.9)[2],2)
-text(1, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-plot(dat_dens$pred[dat_dens$Environment==1], dat_dens$coins[dat_dens$Environment==1],col = alpha(col.pal[2], alpha = 0.4), pch = ifelse(dat_dens$Incentives[dat_dens$Environment==1]==1, 1, 16)  , bty = "n", xlim = c(1,4), ylim = c(50,200) , yaxt = "n", xaxt = "n")
-plot_regression_line(s_dens, dat_dens$pred, 1, color = col.pal[2])
-legend("topright",title = "Incentives", c("Group", "Individual"), col = alpha("black", alpha = 0.6), pch = c(1,16), cex = 1.1, lwd = 1, lty = 1, bty = "n")
-
-mean <- round(mean(s_dens$weight[,1]),2)
-lower <- round(PI(s_dens$weight[,1], 0.9)[1],2)
-upper <- round(PI(s_dens$weight[,1], 0.9)[2],2)
-text(1.75, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 0.9, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-#Distributed
-plot(dat_disc$pred[dat_disc$Environment==2], dat_disc$coins[dat_disc$Environment==2], col = alpha(col.pal[3], alpha = 0.4), pch = ifelse(dat_disc$Incentives[dat_disc$Environment==2]==1, 1, 16)  , bty = "n", xlim = c(0,12), ylim = c(50,200) , xaxt = "n")
-plot_regression_line(s_discoveries, dat_disc$pred, 2, color = col.pal[3])
-mtext("Distributed", side = 2, line = 3)
-axis(side = 1, at = seq(0,12,6))
-mtext("Independent Discoveries", side = 1, line = 3)
-
-mean <- round(mean(s_discoveries$weight[,2]),2)
-lower <- round(PI(s_discoveries$weight[,2], 0.9)[1],2)
-upper <- round(PI(s_discoveries$weight[,2], 0.9)[2],2)
-text(5, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-plot(dat_join$pred[dat_join$Environment==2], dat_join$coins[dat_join$Environment==2],  col = alpha(col.pal[3], alpha = 0.4), pch = ifelse(dat_join$Incentives[dat_join$Environment==2]==1, 1, 16)  , bty = "n", xlim = c(0,10), ylim = c(50,200) , yaxt = "n", xaxt = "n")
-plot_regression_line(s_joining, dat_join$pred, 2, color = col.pal[3])
-axis(side = 1, at = seq(0,10,5))
-mtext("Patch Joinings", side = 1, line = 3)
-
-mean <- round(mean(s_joining$weight[,2]),2)
-lower <- round(PI(s_joining$weight[,2], 0.9)[1],2)
-upper <- round(PI(s_joining$weight[,2], 0.9)[2],2)
-text(5, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-plot(dat_dist$pred[dat_dist$Environment==2], dat_dist$coins[dat_dist$Environment==2],col = alpha(col.pal[3], alpha = 0.4), pch = ifelse(dat_dist$Incentives[dat_dist$Environment==2]==1, 1, 16)  , bty = "n", xlim = c(10,50), ylim = c(50,200) , yaxt = "n", xaxt = "n")
-plot_regression_line(s_distance, dat_dist$pred, 2, color = col.pal[3])
-axis(side = 1, at = seq(10,50,20))
-mtext("Average Distance", side = 1, line = 3)
-
-mean <- round(mean(s_distance$weight[,2]),2)
-lower <- round(PI(s_distance$weight[,2], 0.9)[1],3)
-upper <- round(PI(s_distance$weight[,2], 0.9)[2],3)
-text(25, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-plot(dat_vis$pred[dat_vis$Environment==2], dat_vis$coins[dat_vis$Environment==2], col = alpha(col.pal[3], alpha = 0.4), pch = ifelse(dat_vis$Incentives[dat_vis$Environment==2]==1, 1, 16)  , bty = "n", xlim = c(0.8,1.2), ylim = c(50,200) , yaxt = "n", xaxt = "n")
-plot_regression_line(s_visibility, dat_vis$pred, 2, color = col.pal[3])
-axis(side = 1, at = seq(0.8,1.2, 0.2))
-mtext("Average Visibility", side = 1, line = 3)
-
-mean <- round(mean(s_visibility$weight[,2]),2)
-lower <- round(PI(s_visibility$weight[,2], 0.9)[1],2)
-upper <- round(PI(s_visibility$weight[,2], 0.9)[2],2)
-text(1, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-
-plot(dat_dens$pred[dat_dens$Environment==2], dat_dens$coins[dat_dens$Environment==2],col = alpha(col.pal[3], alpha = 0.4), pch = ifelse(dat_dens$Incentives[dat_dens$Environment==2]==1, 1, 16)  , bty = "n", xlim = c(1,4), ylim = c(50,200) , yaxt = "n", xaxt = "n")
-plot_regression_line(s_dens, dat_dens$pred, 2, color = col.pal[3])
-axis(side = 1, at = seq(1,4,length.out = 3), labels = c("1","2.5","4"))
-mtext("Density", side = 1, line = 3)
-
-mean <- round(mean(s_dens$weight[,2]),2)
-lower <- round(PI(s_dens$weight[,2], 0.9)[1],2)
-upper <- round(PI(s_dens$weight[,2], 0.9)[2],2)
-text(2, 200, paste0(mean, " ","[",lower, ",", upper, "]"), cex = 1.1, col = alpha("black", alpha = ifelse(sign(lower) == sign(upper), 1, 0.4 ) ))
-mtext("Coins", side = 2, outer = TRUE, line = 4.5, cex = 1.3)
-
-#dev.off()
