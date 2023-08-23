@@ -95,7 +95,7 @@ plot.new()
 
 #Individual Scrounging
 
-plot(scrounging$Concentrated, scrounging$CoinsCon,col = alpha(col.pal[2], alpha = 0.4), pch = ifelse(dat_vis_group$Incentives[dat_vis_group$Environment==1]==1, 1, 16), yaxt = "n", bty = "n",xlim = c(0.15,0.9), ylim = c(30, 230) , xaxt = "n", xlab = "")
+plot(scrounging$Concentrated, scrounging$CoinsCon,col = alpha(col.pal[2], alpha = 0.4), pch = ifelse(scrounging$Incentives==1, 1, 16), yaxt = "n", bty = "n",xlim = c(0.15,0.9), ylim = c(30, 230) , xaxt = "n", xlab = "")
 axis(side = 1, c(0.3,0.6,0.9))
 lower <- sapply(1:160 , function(i) PI(scrounging_con[i,])[1])
 upper <- sapply(1:160 , function(i) PI(scrounging_con[i,])[2])
@@ -111,7 +111,7 @@ axis(side = 2, at = seq(50, 200, 50))
 mtext(side = 2, "Coins", line = 2.5, cex = 0.8)
 mtext(side = 1,at = 1, "ID-specific Scrounging Rate", line = 2.25, cex = 0.8)
 
-plot(scrounging$Distributed, scrounging$CoinsDist,col = alpha(col.pal[3], alpha = 0.4), pch = ifelse(dat_vis_group$Incentives[dat_vis_group$Environment==1]==1, 1, 16)  , bty = "n",xlim = c(0.05,0.6), ylim = c(30,230) , yaxt = "n", xlab = "", xaxt = "n")
+plot(scrounging$Distributed, scrounging$CoinsDist,col = alpha(col.pal[3], alpha = 0.4), pch = ifelse(scrounging$Incentives==1, 1, 16)  , bty = "n",xlim = c(0.05,0.6), ylim = c(30,230) , yaxt = "n", xlab = "", xaxt = "n")
 axis(side = 1, c(0.1,0.3,0.5))
 
 plot_regression_line(s_scrounging, scrounging$Distributed, 2, color = col.pal[3])
