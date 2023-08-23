@@ -6,6 +6,8 @@ This repository contains the scripts to reproduce all analyses and figures in
 
 ****"Collective incentives reduce over-exploitation of social information in unconstrained human groups"****
 
+The preprint can be found here: https://psyarxiv.com/p3bj7/
+
 "master_file.r" sources all other scripts and implements the entire project workflow from raw Unity data to plots in the manuscript.
 
 The "Scripts" folder contains all relevant R scripts for data processing and analysis:
