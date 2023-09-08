@@ -2,7 +2,7 @@
 
 This repository contains the scripts to reproduce all analyses and figures in 
 
-**Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Romanczuk, P., Wu, C. & Kurvers, R. (submitted):**
+**Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Romanczuk, P., Wu, C. & Kurvers, R. (under review):**
 
 ****"Collective incentives reduce over-exploitation of social information in unconstrained human groups"****
 
