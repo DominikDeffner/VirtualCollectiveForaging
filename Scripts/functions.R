@@ -47,17 +47,6 @@ heading_to_radians <- function(ForwardX, ForwardZ){
 
 degree_to_radians <- function(degree) return(degree * pi/180)
 
-dvonmises <- function(y, mu, kappa, log = FALSE) {
-  if (any(kappa < 0)) {
-    stop("kappa must be non-negative")
-  }
-  be <- besselI(kappa, nu = 0, expon.scaled = TRUE)
-  out <- - log(2 * pi * be) + kappa * (cos(y - mu) - 1)
-  if (!log) {
-    out <- exp(out)
-  }
-  out
-}
 
 
 ###
