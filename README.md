@@ -35,9 +35,13 @@ The "Stan model code" folder contains stan files for the (baseline and time-vary
 The "Data" folder contains all raw data for both "Group" and "Solo" conditions. Each sub-folder contains data from one experimental session. There are separate .txt files for participant demographics and for player and patch data from each round (indexing starts at 0). Variable names should be quite descriptive, but please get in touch in case anything is unclear.
 
 ***Software requirements***
+
 The analysis code was written in R 4.0.3. Statistical models are fit using the Stan MCMC engine via the rstan (2.21.2) and cmdstanr (0.5.3) packages, which require a C++ compiler. Installation  instructions are available at https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started and https://mc-stan.org/cmdstanr/articles/cmdstanr.html. See also the Stan user guide at https://mc-stan.org/users/documentation. The rethinking package (2.12) is required to process fitted model outputs (installation instructions at http://xcelab.net/rm/software/).
 
 ***Unity experiment files***
+
+TLDR: If you just want to play the experimental game (as a solo participant), extract all files in "CoinScrounge_ClientBuild.zip" and open "CoinScrounge.exe". After the application has started, click "Start Game". If you want anything else, read on!
+
 "CoinScrounge_Source.zip" is the Unity project (using version Unity 2020.3.21f1). Note that it has been stripped of all 3D Models, animations and textures that were not made by ourselves. This means that opening and running it will result in missing/blank visuals, errors and missing assets. If you want to actually run the experiment, use the built executables instead. Nevertheless, all prefabs, scenes and scripts are included, which lets you see the entire project setup and source code.
 The code and prefabs are separated into modules inside the Assets/ directory. The project starts with the "StartingScene" scene.
 
