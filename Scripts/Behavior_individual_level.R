@@ -120,7 +120,10 @@ generated quantities{
 m_coins <- stan(model_code = poisson_multilevel_coins, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_coins <- extract.samples(m_coins)
 
-
+#Frequentist analysis
+dat$Environment <- dat$Environment-1
+dat$Incentives <- dat$Incentives-1
+m_frequ_coins <- glm(coins ~ Environment + Incentives  + Environment*Incentives + (group/id), family = poisson(link = "log"), data = dat)
 
 ####
 ###
@@ -240,6 +243,12 @@ generated quantities{
 m_rates <- stan(model_code = poisson_multilevel_rates, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_rates <- extract.samples(m_rates)
 
+#Frequentist analysis
+dat$Environment <- dat$Environment-1
+dat$Incentives <- dat$Incentives-1
+m_frequ_join <- glm(joining ~ Environment + Incentives  + Environment*Incentives + (group/id), family = poisson(link = "log"), data = dat)
+m_frequ_disc <- glm(discoveries ~ Environment + Incentives  + Environment*Incentives + (group/id), family = poisson(link = "log"), data = dat)
+
 
 #Multilevel Binomial regression for scrounging rates in each condition accounting for individual- and group-level variability
 #This computes the probability that players end up joining a patch where they've observed others exploiting
@@ -358,9 +367,12 @@ dat$joining <- ifelse(dat$joining > dat$observed, dat$observed, dat$joining)
 m_scrounging <- stan(model_code = binomial_multilevel, data = dat, iter = 2000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_scrounging <- extract.samples(m_scrounging)
 
+#Frequentist analysis
+m_frequ_scrounge <- glm(cbind(joining, observed-joining) ~ Environment + Incentives  + Environment*Incentives + (group/id), family = binomial, data = dat)
 
+
+#Get individual scrounging rates for plotting
 scrounging <- data_frame(id = 1:160, Concentrated = NA, Distributed = NA, Incentives = NA, CoinsCon = NA, CoinsDist = NA)
-
 scrounging_con  <- matrix(NA, 160, length(s_scrounging$lp__))
 scrounging_dist <- matrix(NA, 160, length(s_scrounging$lp__))
 
@@ -380,8 +392,6 @@ for (id in 1:160) {
   scrounging$CoinsDist[id] <- mean(d$Coins[d$id == id & d$Env == "D"])
   
 }
-
-
 
 
 
@@ -489,6 +499,10 @@ generated quantities{
 m_distance <- stan(model_code = lognormal_multilevel_distance, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_distance <- extract.samples(m_distance)
 
+#Frequentist analysis
+dat$Environment <- dat$Environment-1
+dat$Incentives <- dat$Incentives-1
+m_frequ_dist <- glm(log(dist) ~ Environment + Incentives  + Environment*Incentives + (group/id), family = gaussian, data = dat)
 
 ####
 ###
@@ -580,6 +594,11 @@ for(i in 1:N){
 
 m_visibility <- stan(model_code = normal_multilevel_visibility, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_visibility <- extract.samples(m_visibility)
+
+#Frequentist analysis
+dat$Environment <- dat$Environment-1
+dat$Incentives <- dat$Incentives-1
+m_frequ_vis <- glm(visibility ~ Environment + Incentives  + Environment*Incentives + (group/id), family = gaussian, data = dat)
 
 
 ###
