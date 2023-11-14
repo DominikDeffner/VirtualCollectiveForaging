@@ -120,10 +120,111 @@ generated quantities{
 m_coins <- stan(model_code = poisson_multilevel_coins, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
 s_coins <- extract.samples(m_coins)
 
+
+#Success conditional on environment in previous round
+
+#Get environment from previous round (3 means first round of experiment)
+d$Environment_prev <- rep(3, nrow(d))
+for (i in 1:nrow(d)) {
+  if (d$round[i] > 1){
+    d$Environment_prev[i] <- ifelse(d$Env[d$id == d$id[i] & d$round == (d$round[i]-1)] == "C",1,2)
+  }  
+}
+dat$Environment_prev = d$Environment_prev
+
+order_coins <- "
+
+data{
+
+  int N; 
+  int N_id;
+  int N_group;
+  int coins[N];
+  int Environment[N];
+  int Environment_prev[N];
+  int Incentives[N];
+  int group[N];
+  int id[N];   
+
+}
+
+parameters{
+  real reward_rate[2,2,3]; 
+
+
+  matrix[2, N_id] z_ID;           
+  vector<lower = 0>[2] sigma_ID;  
+  cholesky_factor_corr[2] Rho_ID; 
+
+  matrix[2, N_group] z_Group;     
+  vector<lower = 0>[2] sigma_Group;
+  cholesky_factor_corr[2] Rho_Group;
+
+} 
+
+transformed parameters {
+ matrix[N_id, 2] offset_ID;
+ matrix[N_group, 2] offset_Group;
+
+ 
+//Varying effects offsets
+offset_ID = (diag_pre_multiply(sigma_ID, Rho_ID) * z_ID)';
+offset_Group = (diag_pre_multiply(sigma_Group, Rho_Group) * z_Group)';
+}
+
+model{
+
+  //Priors
+  for (i in 1:2){
+    for (j in 1:2){
+      for (k in 1:3){
+        reward_rate[i,j,k] ~ normal(5, 0.5); 
+      }
+    }
+  }
+  //Define prior distribution of varying individual and group effects
+  to_vector(z_ID) ~ normal(0, 1);
+  sigma_ID ~ exponential(3);
+  Rho_ID ~ lkj_corr_cholesky(4);
+
+  to_vector(z_Group) ~ normal(0, 1);
+  sigma_Group ~ exponential(3);
+  Rho_Group ~ lkj_corr_cholesky(4);
+  
+//Likelihoods  
+for(i in 1:N){                                                        
+      coins[i]  ~ poisson(exp(reward_rate[Incentives[i],Environment[i], Environment_prev[i] ] + offset_ID[id[i], Environment[i]] + offset_Group[group[i], Environment[i]] )); 
+  }                                                                      
+} 
+
+generated quantities{
+  real coins_pred[2,2,3];
+
+      for(i in 1:2){                 
+         for(j in 1:2){ 
+            for(k in 1:3){ 
+
+        //Compute expected coins on  outcome scale
+        coins_pred[i,j,k] = exp(reward_rate[i,j,k]);
+       }
+      }                            
+    }  
+}
+
+"
+
+
+#Run stan model and save the extracted samples
+m_order <- stan(model_code = order_coins, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.99, max_treedepth = 12))
+s_order <- extract.samples(m_order)
+
+
 #Frequentist analysis
 dat$Environment <- dat$Environment-1
 dat$Incentives <- dat$Incentives-1
 m_frequ_coins <- glm(coins ~ Environment + Incentives  + Environment*Incentives + (group/id), family = poisson(link = "log"), data = dat)
+
+
 
 ####
 ###
