@@ -6,6 +6,8 @@ This repository contains the full data and scripts to reproduce all analyses and
 
 ****"Collective incentives reduce over-exploitation of social information in unconstrained human groups"****
 
+[![DOI](https://zenodo.org/badge/648584677.svg)](https://zenodo.org/doi/10.5281/zenodo.10650332)
+
 The preprint can be found here: https://psyarxiv.com/p3bj7/
 
 "master_file.r" sources all other scripts and implements the entire project workflow from raw Unity data to plots in the manuscript.
