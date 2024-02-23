@@ -293,7 +293,7 @@ generated quantities{
 "
 
 m_distance <- stan(model_code = lognormal_distance, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
-s_distance <- extract.samples(m_distance)
+s_distance_group <- extract.samples(m_distance)
 
 ####
 ###
@@ -357,7 +357,7 @@ for(i in 1:N){
 "
 
 m_visibility <- stan(model_code = normal_visibility, data = dat, iter = 4000, cores = 4, chains = 4, refresh = 10, control = list(adapt_delta = 0.9, max_treedepth = 12))
-s_visibility <- extract.samples(m_visibility)
+s_visibility_group <- extract.samples(m_visibility)
 
 
 #####
@@ -829,3 +829,4 @@ dat_dens$Incentives <- ifelse(dat_dens$Incentives==1, 1,-1)
 dat_dens$pred[is.na(dat_dens$pred)] <- -10
 m <- stan(model_code = coins_predict_group, data = dat_dens, iter = 2000, cores = 2, chains = 2, refresh = 10)
 s_dens <- extract.samples(m)
+

@@ -119,10 +119,12 @@ for (id in unique(dat_players$id)) {
                                y = dat_players$PositionZ[which(dat_players$id== id & dat_players$Round == round)],
                                times = dat_players$t[which(dat_players$id== id & dat_players$Round == round)])
       
+      Trajectory <- Trajectory[-extraction_times,]
+      Trajectory$times <- 1:nrow(Trajectory)
       
       d$Sinuosity[d$id == id & d$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, TrajSinuosity2(TrajFromCoords(Trajectory)))
-      d$DC[d$id == id & d$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, mean(TrajDirectionalChange(TrajFromCoords(Trajectory))))
-      d$SDDC[d$id == id & d$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, sd(TrajDirectionalChange(TrajFromCoords(Trajectory))))
+      d$DC[d$id == id & d$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, mean(TrajDirectionalChange(TrajFromCoords(Trajectory)), na.rm = TRUE))
+      d$SDDC[d$id == id & d$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, sd(TrajDirectionalChange(TrajFromCoords(Trajectory)), na.rm = TRUE))
       
       #Area covered (area of convex hull polygon)
       if (any(is.na(Trajectory$x))){
@@ -160,6 +162,7 @@ for (id in unique(dat_players$id)) {
     
   }
 }
+
 
 
 #Compute scrounging rate as number of joining events/number of potential joining events
