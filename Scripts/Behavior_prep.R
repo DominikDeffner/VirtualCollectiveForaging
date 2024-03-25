@@ -223,8 +223,8 @@ for (id in unique(dat_solo_players$id)) {
     
     
     d_solo$Sinuosity[d_solo$id == id & d_solo$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, TrajSinuosity2(TrajFromCoords(Trajectory)))
-    d_solo$DC[d_solo$id == id & d_solo$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, mean(TrajDirectionalChange(TrajFromCoords(Trajectory))))
-    d_solo$SDDC[d_solo$id == id & d_solo$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, sd(TrajDirectionalChange(TrajFromCoords(Trajectory))))
+    d_solo$DC[d_solo$id == id & d_solo$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, mean(TrajDirectionalChange(TrajFromCoords(Trajectory)), na.rm = TRUE))
+    d_solo$SDDC[d_solo$id == id & d_solo$round == round] <- ifelse(any(is.na(Trajectory$x)), NA, sd(TrajDirectionalChange(TrajFromCoords(Trajectory)), na.rm = TRUE))
     
     #Area covered (area of convex hull polygon)
     
