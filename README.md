@@ -8,8 +8,6 @@ Paper here: https://doi.org/10.1038/s41467-024-47010-3
 
 [![DOI](https://zenodo.org/badge/648584677.svg)](https://zenodo.org/doi/10.5281/zenodo.10650332)
 
-The preprint can be found here: https://psyarxiv.com/p3bj7/
-
 "master_file.r" sources all other scripts and implements the entire project workflow from raw Unity data to plots in the manuscript.
 
 The "Scripts" folder contains all relevant R scripts for data processing and analysis:
