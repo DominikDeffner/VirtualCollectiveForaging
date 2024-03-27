@@ -2,9 +2,9 @@
 
 This repository contains the full data and scripts to reproduce all analyses and figures as well as the experimental game itself used in 
 
-**Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Romanczuk, P., Wu, C. & Kurvers, R. (in press at Nature Communications):**
+****Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Romanczuk, P., Wu, C. & Kurvers, R. (2024) Collective incentives reduce over-exploitation of social information in unconstrained human groups. Nature Communications. 15, 2683.****
 
-****"Collective incentives reduce over-exploitation of social information in unconstrained human groups"****
+Paper here: https://doi.org/10.1038/s41467-024-47010-3
 
 [![DOI](https://zenodo.org/badge/648584677.svg)](https://zenodo.org/doi/10.5281/zenodo.10650332)
 
