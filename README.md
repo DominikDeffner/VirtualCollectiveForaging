@@ -1,4 +1,4 @@
-# Collective incentives reduce over-exploitation of social information in unconstrained human groups
+# Virtual Collective Foraging 
 
 This repository contains the full data and scripts to reproduce all analyses and figures as well as the experimental game itself used in 
 
