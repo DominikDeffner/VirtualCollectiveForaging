@@ -1,12 +1,10 @@
 # Virtual Collective Foraging 
 
-This repository contains the full data and scripts to reproduce all analyses and figures as well as the experimental game itself used in 
+This repository contains the full data and scripts to reproduce all analyses and figures as well as the experimental game itself used in: 
 
 ****Deffner, D., Mezey, D., Kahl, B., Schakowski, A., Romanczuk, P., Wu, C. & Kurvers, R. (2024) Collective incentives reduce over-exploitation of social information in unconstrained human groups. Nature Communications. 15, 2683.****
 
 Paper here: https://doi.org/10.1038/s41467-024-47010-3
-
-[![DOI](https://zenodo.org/badge/648584677.svg)](https://zenodo.org/doi/10.5281/zenodo.10650332)
 
 "master_file.r" sources all other scripts and implements the entire project workflow from raw Unity data to plots in the manuscript.
 
@@ -46,3 +44,5 @@ TLDR: If you just want to play the experimental game (as a solo participant), ex
 The code and prefabs are separated into modules inside the Assets/ directory. The project starts with the "StartingScene" scene.
 
 "CoinScrounge_ClientBuild.zip" acts as the application that the participant interacts with. It can also be used as a host, or server, but the dedicated "CoinScrounge_ServerBuild.zip" runs as a console application without any of the visuals. Both builds include a "settings.avr" file which can be used to change parameters/settings as well as reveal some hidden options. Pressing RightCtrl+Tab within the client will bring up a debug-screen with some additional options.
+
+[![DOI](https://zenodo.org/badge/648584677.svg)](https://zenodo.org/doi/10.5281/zenodo.10650332)
